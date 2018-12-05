@@ -1,0 +1,37 @@
+﻿@page
+@model ReturnsModel
+@{
+    ViewData["Title"] = "Returns";
+}
+
+<h1>Product Returns</h1>
+
+<form method="POST">
+<table width="100%">
+    <thead>
+        <tr>
+            <th>Return Id</th>
+            <th>Customer Id</th>
+            <th>Order Number</th>
+            <th width="30%" colspan="2">Image</th>
+            <th>Return Comments</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var rtn in Model.Returns) {
+        <tr>
+            <td>@rtn.Id</td>
+            <td>@rtn.CustomerId</td>
+            <td>@rtn.OrderNumber</td>
+            <td><img style="max-width:400px;" src="@rtn.ReturnImageUrl" /></td>
+            <td>
+                <button name="GetHandwritingReturnId" value="@rtn.Id" aria-label="Get Handwriting Analysis">
+                    <i class="fa fa-cloud"></i>&nbsp;Analyse
+                </button>
+            </td>
+            <td>@rtn.ReturnNotes</td>
+        </tr>
+        }
+    </tbody>
+</table>
+</form>

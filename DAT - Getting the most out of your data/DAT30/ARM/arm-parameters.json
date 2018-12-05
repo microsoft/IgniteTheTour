@@ -1,0 +1,159 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "luis_name": {
+            "value": "lp3s3-luis"
+        },
+        "luis_location": {
+            "value": "westus"
+        },
+        "luis_apiType": {
+            "value": "LUIS"
+        },
+        "luis_sku": {
+            "value": "S0"
+        },
+        "text_analytics_name": {
+            "value": "lp3s3-text-analytics"
+        },
+        "text_analytics_location": {
+            "value": "westus"
+        },
+        "text_analytics_apiType": {
+            "value": "TextAnalytics"
+        },
+        "text_analytics_sku": {
+            "value": "S"
+        },
+        "translator_name": {
+            "value": "lp3s3-translator"
+        },
+        "translator_location": {
+            "value": "global"
+        },
+        "translator_apiType": {
+            "value": "TextTranslation"
+        },
+        "translator_sku": {
+            "value": "S1"
+        },
+        "computer_vision_name": {
+            "value": "lp3s3-computer-vision"
+        },
+        "computer_vision_location": {
+            "value": "westus"
+        },
+        "computer_vision_apiType": {
+            "value": "ComputerVision"
+        },
+        "computer_vision_sku": {
+            "value": "S1"
+        },
+        "customvision_name": {
+            "value": "lp3s3-customvision"
+        },
+        "customvision_location": {
+            "value": "southcentralus"
+        },
+        "customvision_sku": {
+            "value": "S0"
+        },
+        "customvision_predictionsku": {
+            "value": "S0"
+        },
+        "face_name": {
+            "value": "lp3s3-face"
+        },
+        "face_location": {
+            "value": "westus"
+        },
+        "face_apiType": {
+            "value": "Face"
+        },
+        "face_sku": {
+            "value": "S0"
+        },
+        "function_name": {
+            "value": "lp3s3-analytics-function"
+        },
+        "function_storageName": {
+            "value": "lp3s3analyticsstorage"
+        },
+        "function_location": {
+            "value": "West US"
+        },
+        "function_subscriptionId": {
+            "value": "bc202ec2-54ef-4576-b7fb-a961c983398e"
+        },
+        "db_administratorLogin": {
+            "value": "tailwind"
+        },
+        "db_administratorLoginPassword": {
+            "value": "Password01!"
+        },
+        "db_collation": {
+            "value": "SQL_Latin1_General_CP1_CI_AS"
+        },
+        "db_databaseName": {
+            "value": "lp3s3-db"
+        },
+        "db_tier": {
+            "value": "Standard"
+        },
+        "db_skuName": {
+            "value": "S0"
+        },
+        "db_location": {
+            "value": "southcentralus"
+        },
+        "db_maxSizeBytes": {
+            "value": 268435456000
+        },
+        "db_serverName": {
+            "value": "lp3s3-db-server"
+        },
+        "db_sampleName": {
+            "value": ""
+        },
+        "db_zoneRedundant": {
+            "value": false
+        },
+        "db_licenseType": {
+            "value": ""
+        },
+        "db_enableATP": {
+            "value": false
+        },
+        "db_allowAzureIps": {
+            "value": true
+        },
+        "webapp_name": {
+            "value": "lp3s3-tailwind-admin"
+        },
+        "webapp_hostingPlanName": {
+            "value": "lp3s3P1v2"
+        },
+        "webapp_hostingEnvironment": {
+            "value": ""
+        },
+        "webapp_location": {
+            "value": "West US"
+        },
+        "webapp_sku": {
+            "value": "PremiumV2"
+        },
+        "webapp_workerSize": {
+            "value": "0"
+        },
+        "webapp_serverFarmResourceGroup": {
+            "value": "lp3s3-rg"
+        },
+        "webapp_skuCode": {
+            "value": "S1"
+        },
+        "webapp_subscriptionId": {
+            "value": "cd400f31-6f94-40ab-863a-673192a3c0d0"
+        }
+    }
+}

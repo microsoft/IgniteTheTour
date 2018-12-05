@@ -1,0 +1,278 @@
+{
+    "parameters": {
+        "prefix": {
+            "type": "string"
+        },
+        "sku": {
+            "type": "string",
+            "defaultValue": "PremiumV2"
+        },
+        "location": {
+            "type": "string",
+            "defaultValue": "westus2"
+        },
+        "skuCode": {
+            "type": "string",
+            "defaultValue": "P1v2"
+        },
+        "workerSize": {
+            "type": "string",
+            "defaultValue": "3"
+        },
+        "sqlAdminLogin": {
+            "type": "string",
+            "defaultValue": "tailwind"
+        },
+        "sqlAdminPassword": {
+            "type": "securestring"
+        },
+        "sqlSkuName": {
+            "type": "string",
+            "defaultValue": "S0"
+        },
+        "sqlTier": {
+            "type": "string",
+            "defaultValue": "Standard"
+        },
+        "createCosmosDb": {
+            "type": "bool",
+            "defaultValue": true
+        },
+        "createRegistry": {
+            "type": "bool",
+            "defaultValue": true
+        }
+    },
+    "variables": {
+        "hostingPlanName": "[concat(parameters('prefix'), 'plan')]",
+        "frontendName": "[concat(parameters('prefix'), 'frontend')]",
+        "inventoryServiceName": "[concat(parameters('prefix'), 'inventory')]",
+        "productServiceName": "[concat(parameters('prefix'), 'product')]",
+        "sqlServerName": "[concat(parameters('prefix'), 'sqlsvr')]",
+        "cosmosDbName": "[concat(parameters('prefix'), 'cosmosdb')]",
+        "registryName": "[concat(parameters('prefix'), 'registry')]",
+        "sqlDbName": "tailwind",
+        "hostingEnvironment": ""
+    },
+    "resources": [
+        {
+            "apiVersion": "2016-09-01",
+            "name": "[variables('hostingPlanName')]",
+            "type": "Microsoft.Web/serverfarms",
+            "location": "[parameters('location')]",
+            "properties": {
+                "name": "[variables('hostingPlanName')]",
+                "workerSizeId": "[parameters('workerSize')]",
+                "reserved": true,
+                "numberOfWorkers": "1",
+                "hostingEnvironment": ""
+            },
+            "sku": {
+                "Tier": "[parameters('sku')]",
+                "Name": "[parameters('skuCode')]"
+            },
+            "kind": "linux"
+        },
+        {
+            "apiVersion": "2016-03-01",
+            "name": "[variables('frontendName')]",
+            "type": "Microsoft.Web/sites",
+            "properties": {
+                "name": "[variables('frontendName')]",
+                "siteConfig": {
+                    "appSettings": [
+                        {
+                            "name": "WEBSITES_ENABLE_APP_SERVICE_STORAGE",
+                            "value": "false"
+                        },
+                        {
+                            "name": "WEBSITE_HTTPLOGGING_RETENTION_DAYS",
+                            "value": "0"
+                        }
+                    ],
+                    "appCommandLine": "",
+                    "linuxFxVersion": "DOCKER|nginx"
+                },
+                "serverFarmId": "[concat('/subscriptions/', subscription().subscriptionId,'/resourcegroups/', resourceGroup().name, '/providers/Microsoft.Web/serverfarms/', variables('hostingPlanName'))]",
+                "hostingEnvironment": "[variables('hostingEnvironment')]"
+            },
+            "location": "[parameters('location')]",
+            "dependsOn": [
+                "[concat('Microsoft.Web/serverfarms/', variables('hostingPlanName'))]"
+            ]
+        },
+        {
+            "apiVersion": "2016-03-01",
+            "name": "[variables('inventoryServiceName')]",
+            "type": "Microsoft.Web/sites",
+            "properties": {
+                "name": "[variables('inventoryServiceName')]",
+                "siteConfig": {
+                    "appSettings": [
+                        {
+                            "name": "WEBSITES_ENABLE_APP_SERVICE_STORAGE",
+                            "value": "false"
+                        },
+                        {
+                            "name": "WEBSITE_HTTPLOGGING_RETENTION_DAYS",
+                            "value": "0"
+                        }
+                    ],
+                    "appCommandLine": "",
+                    "linuxFxVersion": "DOCKER|nginx"
+                },
+                "serverFarmId": "[concat('/subscriptions/', subscription().subscriptionId,'/resourcegroups/', resourceGroup().name, '/providers/Microsoft.Web/serverfarms/', variables('hostingPlanName'))]",
+                "hostingEnvironment": "[variables('hostingEnvironment')]"
+            },
+            "location": "[parameters('location')]",
+            "dependsOn": [
+                "[concat('Microsoft.Web/serverfarms/', variables('hostingPlanName'))]"
+            ],
+            "resources": [
+                {
+                    "apiVersion": "2015-08-01",
+                    "name": "connectionstrings",
+                    "type": "config",
+                    "dependsOn": [
+                        "[resourceId('Microsoft.Web/sites', variables('inventoryServiceName'))]"
+                    ],
+                    "properties": {
+                        "InventoryContext": {
+                            "value": "[concat('Server=tcp:', reference(concat('Microsoft.Sql/servers/', variables('sqlServerName'))).fullyQualifiedDomainName, ',1433;Initial Catalog=tailwind;User Id=', parameters('sqlAdminLogin'), ';Password=', parameters('sqlAdminPassword'), ';MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;')]",
+                            "type": "SQLServer"
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "apiVersion": "2016-03-01",
+            "name": "[variables('productServiceName')]",
+            "type": "Microsoft.Web/sites",
+            "properties": {
+                "name": "[variables('productServiceName')]",
+                "siteConfig": {
+                    "appSettings": [
+                        {
+                            "name": "WEBSITES_ENABLE_APP_SERVICE_STORAGE",
+                            "value": "false"
+                        },
+                        {
+                            "name": "WEBSITE_HTTPLOGGING_RETENTION_DAYS",
+                            "value": "0"
+                        }
+                    ],
+                    "appCommandLine": "",
+                    "linuxFxVersion": "DOCKER|nginx"
+                },
+                "serverFarmId": "[concat('/subscriptions/', subscription().subscriptionId,'/resourcegroups/', resourceGroup().name, '/providers/Microsoft.Web/serverfarms/', variables('hostingPlanName'))]",
+                "hostingEnvironment": "[variables('hostingEnvironment')]"
+            },
+            "location": "[parameters('location')]",
+            "dependsOn": [
+                "[concat('Microsoft.Web/serverfarms/', variables('hostingPlanName'))]"
+            ]
+        },
+        {
+            "apiVersion": "2015-05-01-preview",
+            "location": "[parameters('location')]",
+            "name": "[variables('sqlServerName')]",
+            "properties": {
+                "administratorLogin": "[parameters('sqlAdminLogin')]",
+                "administratorLoginPassword": "[parameters('sqlAdminPassword')]",
+                "version": "12.0"
+            },
+            "resources": [
+                {
+                    "apiVersion": "2017-10-01-preview",
+                    "dependsOn": [
+                        "[concat('Microsoft.Sql/servers/', variables('sqlServerName'))]"
+                    ],
+                    "location": "[parameters('location')]",
+                    "name": "[variables('sqlDbName')]",
+                    "properties": {
+                        "collation": "SQL_Latin1_General_CP1_CI_AS",
+                        "maxSizeBytes": 268435456000,
+                        "sampleName": "",
+                        "zoneRedundant": false,
+                        "licenseType": ""
+                    },
+                    "sku": {
+                        "name": "[parameters('sqlSkuName')]",
+                        "tier": "[parameters('sqlTier')]"
+                    },
+                    "type": "databases"
+                },
+                {
+                    "apiVersion": "2014-04-01-preview",
+                    "dependsOn": [
+                        "[concat('Microsoft.Sql/servers/', variables('sqlServerName'))]"
+                    ],
+                    "location": "[parameters('location')]",
+                    "name": "AllowAllWindowsAzureIps",
+                    "properties": {
+                        "endIpAddress": "0.0.0.0",
+                        "startIpAddress": "0.0.0.0"
+                    },
+                    "type": "firewallrules"
+                },
+                {
+                    "apiVersion": "2017-03-01-preview",
+                    "type": "securityAlertPolicies",
+                    "name": "Default",
+                    "dependsOn": [
+                        "[concat('Microsoft.Sql/servers/', variables('sqlServerName'))]",
+                        "[concat('Microsoft.Sql/servers/', variables('sqlServerName'), '/databases/', variables('sqlDbName'))]"
+                    ],
+                    "properties": {
+                        "state": "Enabled",
+                        "disabledAlerts": [],
+                        "emailAddresses": [],
+                        "emailAccountAdmins": true
+                    }
+                }
+            ],
+            "type": "Microsoft.Sql/servers"
+        },
+        {
+            "condition": "[parameters('createCosmosDb')]",
+            "apiVersion": "2015-04-08",
+            "kind": "MongoDB",
+            "type": "Microsoft.DocumentDb/databaseAccounts",
+            "name": "[variables('cosmosDbName')]",
+            "location": "[parameters('location')]",
+            "properties": {
+                "databaseAccountOfferType": "Standard",
+                "locations": [
+                    {
+                        "id": "[concat(variables('cosmosDbName'), '-', parameters('location'))]",
+                        "failoverPriority": 0,
+                        "locationName": "[parameters('location')]"
+                    }
+                ],
+                "enableMultipleWriteLocations": true,
+                "isVirtualNetworkFilterEnabled": false,
+                "virtualNetworkRules": [],
+                "dependsOn": []
+            },
+            "tags": {
+                "defaultExperience": "MongoDB"
+            }
+        },
+        {
+            "condition": "[parameters('createRegistry')]",
+            "name": "[variables('registryName')]",
+            "type": "Microsoft.ContainerRegistry/registries",
+            "location": "[parameters('location')]",
+            "apiVersion": "2017-10-01",
+            "sku": {
+                "name": "Standard"
+            },
+            "properties": {
+                "adminUserEnabled": true
+            }
+        }
+    ],
+    "$schema": "http://schema.management.azure.com/schemas/2014-04-01-preview/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0"
+}

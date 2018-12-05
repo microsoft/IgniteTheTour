@@ -1,0 +1,181 @@
+{
+	"$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"adminUsername": {
+			"type": "string"
+		},
+		"adminPassword": {
+			"type": "securestring"
+		},
+		"vmCount": {
+			"type": "int"
+		},
+		"subnetName": {
+			"type": "string"
+		},
+		"virtualNetworkName": {
+			"type": "string"
+		},
+		"registrationKey": {
+			"type": "string"
+		},
+		"registrationUrl": {
+			"type": "string"
+		},
+		"nodeConfigurationName": {
+			"type": "string"
+		},
+		"logAnalyticsName": {
+			"type": "string"
+		}
+	},
+	"variables": {
+		"nicName": "virtual-nic-linux-",
+		"publicIPAddressName": "public-ip-linux-",
+		"vmName": "linux-vm-",
+		"windowsOSVersion": "16.04.0-LTS",
+		"subnetRef": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworkName'), parameters('subnetName'))]"
+	},
+	"resources": [{
+			"apiVersion": "2016-03-30",
+			"type": "Microsoft.Network/publicIPAddresses",
+			"name": "[concat(variables('publicIPAddressName'), copyIndex())]",
+			"location": "[resourceGroup().location]",
+			"properties": {
+				"publicIPAllocationMethod": "Dynamic"
+			},
+			"copy": {
+				"name": "pipcopy",
+				"count": "[parameters('vmCount')]"
+			}
+		},
+		{
+			"apiVersion": "2016-03-30",
+			"type": "Microsoft.Network/networkInterfaces",
+			"name": "[concat(variables('nicName'), copyIndex())]",
+			"location": "[resourceGroup().location]",
+			"dependsOn": [
+				"[resourceId('Microsoft.Network/publicIPAddresses/', concat(variables('publicIPAddressName'), copyIndex()))]"
+			],
+			"properties": {
+				"ipConfigurations": [{
+					"name": "ipconfig1",
+					"properties": {
+						"privateIPAllocationMethod": "Dynamic",
+						"publicIPAddress": {
+							"id": "[resourceId('Microsoft.Network/publicIPAddresses/', concat(variables('publicIPAddressName'), copyIndex()))]"
+						},
+						"subnet": {
+							"id": "[variables('subnetRef')]"
+						}
+					}
+				}]
+			},
+			"copy": {
+				"name": "niccopy",
+				"count": "[parameters('vmCount')]"
+			}
+		},
+		{
+			"apiVersion": "2017-03-30",
+			"type": "Microsoft.Compute/virtualMachines",
+			"name": "[concat(variables('vmName'), copyIndex())]",
+			"location": "[resourceGroup().location]",
+			"dependsOn": [
+				"[concat(variables('nicName'), copyIndex())]"
+			],
+			"properties": {
+				"hardwareProfile": {
+					"vmSize": "Standard_A2"
+				},
+				"osProfile": {
+					"computerName": "[concat(variables('vmName'), copyIndex())]",
+					"adminUsername": "[parameters('adminUsername')]",
+					"adminPassword": "[parameters('adminPassword')]"
+				},
+				"storageProfile": {
+					"imageReference": {
+						"publisher": "Canonical",
+						"offer": "UbuntuServer",
+						"sku": "[variables('windowsOSVersion')]",
+						"version": "latest"
+					},
+					"osDisk": {
+						"createOption": "FromImage"
+					}
+				},
+				"networkProfile": {
+					"networkInterfaces": [{
+						"id": "[resourceId('Microsoft.Network/networkInterfaces', concat(variables('nicName'), copyIndex()))]"
+					}]
+				}
+			},
+			"copy": {
+				"name": "vmcopy",
+				"count": "[parameters('vmCount')]"
+			}
+		},
+		{
+			"apiVersion": "2017-12-01",
+			"type": "Microsoft.Compute/virtualMachines/extensions",
+			"name": "[concat(variables('vmName'), copyIndex(),'/enabledsc')]",
+			"location": "[resourceGroup().location]",
+			"dependsOn": [
+			  "[concat('Microsoft.Compute/virtualMachines/', variables('vmName'), copyIndex())]"
+			],
+			"properties": {
+			  "publisher": "Microsoft.OSTCExtensions",
+			  "type": "DSCForLinux",
+			  "typeHandlerVersion": "2.7",
+			  "autoUpgradeMinorVersion": true,
+			  "settings": {
+				"ExtensionAction": "Register",
+				"NodeConfigurationName": "[parameters('nodeConfigurationName')]",
+				"RefreshFrequencyMins": 30,
+				"ConfigurationMode": "applyAndAutoCorrect",
+				"ConfigurationModeFrequencyMins": 15,
+				"RegistrationUrl": "[parameters('registrationUrl')]"
+			  },
+			  "protectedSettings": {
+				"RegistrationKey": "[parameters('registrationKey')]"
+			  }
+			},
+			"copy": {
+				"name": "vmcopy",
+				"count": "[parameters('vmCount')]"
+			}
+		},
+		{
+			"type": "Microsoft.Compute/virtualMachines/extensions",
+			"name": "[concat(variables('vmName'), copyIndex(),'/Microsoft.Monitoring')]",
+			"apiVersion": "2018-06-01",
+			"location": "[resourceGroup().location]",
+			"dependsOn": [
+				"[concat('Microsoft.Compute/virtualMachines/', variables('vmName'), copyIndex())]"
+			  ],
+			"properties": {
+			  "publisher": "Microsoft.EnterpriseCloud.Monitoring",
+			  "type": "OmsAgentForLinux",
+			  "typeHandlerVersion": "1.7",
+			  "settings": {
+				"workspaceId": "[reference(resourceId(resourceGroup().name, 'Microsoft.OperationalInsights/workspaces/', parameters('logAnalyticsName')), '2015-11-01-preview').customerId]",
+				"azureResourceId": "[resourceId('Microsoft.Compute/virtualMachines/', concat(variables('vmName'), copyIndex()))]"
+			  },
+			  "protectedSettings": {
+				"workspaceKey": "[listKeys(resourceId(resourceGroup().name, 'Microsoft.OperationalInsights/workspaces/', parameters('logAnalyticsName')), '2015-11-01-preview').primarySharedKey]"
+			  }
+			},
+			"copy": {
+				"name": "vmcopy",
+				"count": "[parameters('vmCount')]"
+			}
+		  }
+	],
+	"outputs": {
+		"vmNamePrefix":{
+			"type": "string",
+			"value": "[variables('vmName')]"
+		}
+	}
+}

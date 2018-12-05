@@ -1,0 +1,28 @@
+replicaCount: 1
+image:
+  registry: ACR_NAME.azurecr.io
+  repository: frontend
+  tag: latest
+  ## Specify a imagePullPolicy
+  ## Defaults to 'Always' if image tag is 'latest', else set to 'IfNotPresent'
+  ## ref: http://kubernetes.io/docs/user-guide/images/#pre-pulling-images
+  ##
+  pullPolicy: Always
+  port: 8080
+
+service:
+  ## Type of service; valid values are "ClusterIP", "LoadBalancer", and
+  ## "NodePort". "ClusterIP" is sufficient in the case when the Proxy will be used
+  ## from within the cluster. To expose externally, consider a "NodePort" or "LoadBalancer" service.
+  type: ClusterIP
+ingress:
+
+  enabled: true
+  # provie key/value annotations
+  annotations:
+  # Provide an array of values for the ingress host mapping
+  hosts:
+  # Provide a base64 encoded cert for TLS use 
+  tls: 
+producturl: http://localhost
+inventoryurl: http://localhost

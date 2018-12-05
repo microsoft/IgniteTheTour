@@ -1,0 +1,311 @@
+{
+	"$schema": "https://schema.management.azure.com/schemas/2018-05-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"adminUsername": {
+			"type": "string",
+			"defaultValue": "azureuser",
+			"metadata": {
+				"description": "Admin user name for the virtual machines."
+			}
+		},
+		"adminPassword": {
+			"type": "securestring",
+			"defaultValue": "Password12",
+			"metadata": {
+				"description": "Admin password name for the virtual machines."
+			}
+		},
+		"WindowsVMCount": {
+			"type": "int",
+			"defaultValue": 1,
+			"metadata": {
+				"description": "The number of Windows VMs to create."
+			}
+		},
+		"LinuxVMCount": {
+			"type": "int",
+			"defaultValue": 1,
+			"metadata": {
+				"description": "The number of Linux VMs to create."
+			}
+		},
+		"tenantID": {
+			"type": "securestring",
+			"metadata": {
+				"description": "Tenant ID to be used when performing automation."
+			}
+		},
+		"appId": {
+			"type": "securestring",
+			"metadata": {
+				"description": "Service Principal app ID to be used when performing automation."
+			}
+		},
+		"secret": {
+			"type": "securestring",
+			"metadata": {
+				"description": "Service Principal secret to be used when performing automation."
+			}
+		},
+		"teamsWebHook": {
+			"type": "string",
+			"defaultValue": "https://outlook.office.com/webhook/3b51bf6b-dc4c-46ca-944d-4c3e493fb4dc@72f988bf-86f1-41af-91ab-2d7cd011db47/IncomingWebhook/c05e36295f334b9db0ee9c2d69e8a65d/b0959e18-c917-49ec-9a03-b91957a24836",
+			"metadata": {
+				"description": "Webhook to Teams Channel."
+			}
+		}
+	},
+	"variables": {
+		"automationAnalyticsURI": "https://raw.githubusercontent.com/neilpeterson/azure-automation-dsc/master/azure-templates/automation-monitoring/automationAnalytics.json",
+		"solutionsURI": "https://raw.githubusercontent.com/neilpeterson/azure-automation-dsc/master/azure-templates/automation-monitoring/automationSolutions.json",
+		"windowsVirtualMachineURI": "https://raw.githubusercontent.com/neilpeterson/azure-automation-dsc/master/azure-templates/core-resources/windowsVirtualMachines.json",
+		"linuxVirtualMachineURI": "https://raw.githubusercontent.com/neilpeterson/azure-automation-dsc/master/azure-templates/core-resources/linuxVirtualMachines.json",
+		"linkAccountsURI": "https://raw.githubusercontent.com/neilpeterson/azure-automation-dsc/master/azure-templates/automation-monitoring/linkedWorkspaceAccount.json",
+		"networkURI": "https://raw.githubusercontent.com/neilpeterson/azure-automation-dsc/master/azure-templates/core-resources/virtualNetwork.json",
+		"storageURI": "https://raw.githubusercontent.com/neilpeterson/azure-automation-dsc/master/azure-templates/core-resources/storageAccount.json",
+		"dashboardURI": "https://raw.githubusercontent.com/neilpeterson/azure-automation-dsc/master/azure-templates/azure-dashboard/twt-dashboard.json",
+		"LogAnalyticsTier": "PerGB2018"
+	},
+	"resources": [
+		{
+			"apiVersion": "2018-05-01",
+			"name": "automationAnalytics",
+			"type": "Microsoft.Resources/deployments",
+			"properties": {
+				"mode": "Incremental",
+				"templateLink": {
+					"uri": "[variables('automationAnalyticsURI')]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"TeamsWebHook": {
+						"value": "[parameters('teamsWebHook')]"
+					},
+					"insights-sku": {
+						"value": "[variables('LogAnalyticsTier')]"
+					},
+					"tenantID": {
+						"value": "[parameters('tenantID')]"
+					},
+					"appId": {
+						"value": "[parameters('appId')]"
+					},
+					"secret": {
+						"value": "[parameters('secret')]"
+					}
+				}
+			}
+		},
+		{
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2018-05-01",
+			"name": "UpdatesSolution",
+			"dependsOn": [
+				"[concat('Microsoft.Resources/deployments/', 'automationAnalytics')]"
+			],
+			"properties": {
+				"mode": "Incremental",
+				"templateLink": {
+					"uri": "[variables('solutionsURI')]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"workspaceName": {
+						"value": "[reference('automationAnalytics').outputs.automationAccountName.value]"
+					},
+					"solutionName": {
+						"value": "Updates"
+					}
+				}
+			}
+		},
+		{
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2018-05-01",
+			"name": "ChangeTrackingSolution",
+			"dependsOn": [
+				"[concat('Microsoft.Resources/deployments/', 'automationAnalytics')]"
+			],
+			"properties": {
+				"mode": "Incremental",
+				"templateLink": {
+					"uri": "[variables('solutionsURI')]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"workspaceName": {
+						"value": "[reference('automationAnalytics').outputs.automationAccountName.value]"
+					},
+					"solutionName": {
+						"value": "ChangeTracking"
+					}
+				}
+			}
+		},
+		{
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2018-05-01",
+			"name": "LinkAccountWithWorkspace",
+			"dependsOn": [
+				"[concat('Microsoft.Resources/deployments/', 'automationAnalytics')]",
+				"[concat('Microsoft.Resources/deployments/', 'ChangeTrackingSolution')]",
+				"[concat('Microsoft.Resources/deployments/', 'UpdatesSolution')]"
+			],
+			"properties": {
+				"mode": "Incremental",
+				"templateLink": {
+					"uri": "[variables('linkAccountsURI')]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"accountName": {
+						"value": "[reference('automationAnalytics').outputs.automationAccountName.value]"
+					},
+					"accountResourceGroupName": {
+						"value": "[resourceGroup().name]"
+					},
+					"workspaceName": {
+						"value": "[reference('automationAnalytics').outputs.automationAccountName.value]"
+					}
+				}
+			}
+		},
+		{
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2018-05-01",
+			"name": "VirtualNetwork",
+			"properties": {
+				"mode": "Incremental",
+				"templateLink": {
+					"uri": "[variables('networkURI')]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+				}
+			}
+		},
+		{
+			"condition": "[greaterOrEquals(parameters('WindowsVMCount'), 1)]",
+			"apiVersion": "2018-05-01",
+			"name": "windowsVirtualMachine",
+			"type": "Microsoft.Resources/deployments",
+			"dependsOn": [
+				"Microsoft.Resources/deployments/automationAnalytics",
+				"Microsoft.Resources/deployments/VirtualNetwork"
+			],
+			"properties": {
+				"mode": "Incremental",
+				"templateLink": {
+					"uri": "[variables('windowsVirtualMachineURI')]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"adminUsername": {
+						"value": "[parameters('adminUsername')]"
+					},
+					"adminPassword": {
+						"value": "[parameters('adminPassword')]"
+					},
+					"vmCount": {
+						"value": "[parameters('WindowsVMCount')]"
+					},
+					"registrationKey": {
+						"value": "[reference('automationAnalytics').outputs.registrationKey.value]"
+					},
+					"registrationUrl": {
+						"value": "[reference('automationAnalytics').outputs.registrationUrl.value]"
+					},
+					"nodeConfigurationName": {
+						"value": "[reference('automationAnalytics').outputs.nodeConfigurationName.value]"
+					},
+					"logAnalyticsName": {
+						"value": "[reference('automationAnalytics').outputs.automationAccountName.value]"
+					},
+					"subnetName": {
+						"value": "[reference('VirtualNetwork').outputs.subnetName.value]"
+					},
+					"virtualNetworkName": {
+						"value": "[reference('VirtualNetwork').outputs.virtualNetworkName.value]"
+					}
+				}
+			}
+		},
+		{
+			"condition": "[greaterOrEquals(parameters('LinuxVMCount'), 1)]",
+			"apiVersion": "2018-05-01",
+			"name": "linuxVirtualMachine",
+			"type": "Microsoft.Resources/deployments",
+			"dependsOn": [
+				"Microsoft.Resources/deployments/automationAnalytics"
+			],
+			"properties": {
+				"mode": "Incremental",
+				"templateLink": {
+					"uri": "[variables('linuxVirtualMachineURI')]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"adminUsername": {
+						"value": "[parameters('adminUsername')]"
+					},
+					"adminPassword": {
+						"value": "[parameters('adminPassword')]"
+					},
+					"vmCount": {
+						"value": "[parameters('LinuxVMCount')]"
+					},
+					"subnetName": {
+						"value": "[reference('VirtualNetwork').outputs.subnetName.value]"
+					},
+					"virtualNetworkName": {
+						"value": "[reference('VirtualNetwork').outputs.virtualNetworkName.value]"
+					},
+					"registrationKey": {
+						"value": "[reference('automationAnalytics').outputs.registrationKey.value]"
+					},
+					"registrationUrl": {
+						"value": "[reference('automationAnalytics').outputs.registrationUrl.value]"
+					},
+					"nodeConfigurationName": {
+						"value": "[reference('automationAnalytics').outputs.linuxNodeConfigurationName.value]"
+					},
+					"logAnalyticsName": {
+						"value": "[reference('automationAnalytics').outputs.automationAccountName.value]"
+					}
+				}
+			}
+		},
+		{
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2018-05-01",
+			"name": "storageAccount",
+			"dependsOn": [],
+			"properties": {
+				"mode": "Incremental",
+				"templateLink": {
+					"uri": "[variables('storageURI')]",
+					"contentVersion": "1.0.0.0"
+				}
+			}
+		},
+		{
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2018-05-01",
+			"name": "dashboard",
+			"dependsOn": [],
+			"properties": {
+				"mode": "Incremental",
+				"templateLink": {
+					"uri": "[variables('dashboardURI')]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"workspaceName": {
+						"value": "[reference('automationAnalytics').outputs.automationAccountName.value]"
+					}
+				}
+			}
+		}
+	]
+}

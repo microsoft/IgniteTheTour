@@ -1,0 +1,1 @@
+get-service w3svc | start-service

@@ -1,0 +1,12 @@
+{
+  "IsEncrypted": false,
+  "Values": {
+      "AzureWebJobsStorage": "",
+      "APPINSIGHTS_INSTRUMENTATIONKEY": "",
+      "FUNCTIONS_WORKER_RUNTIME": "dotnet"
+  },
+  "Host": {
+      "LocalHttpPort": 7071,
+      "CORS": "*"
+  }
+}

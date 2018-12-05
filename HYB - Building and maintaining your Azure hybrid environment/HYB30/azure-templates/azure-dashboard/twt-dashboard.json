@@ -1,0 +1,112 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+    "workspaceName": {
+			"type": "string",
+			"metadata": {
+				"description": "The name of the Log Analytics workspace."
+			}
+		}
+  },
+	"variables": {
+		"dashboardName": "[concat('twt-dashboard-', resourceGroup().name)]"
+	},
+	"resources": [{
+			"properties": {
+				"lenses": {
+					"0": {
+						"order": 0,
+						"parts": {
+							"0": {
+								"position": {
+									"x": 0,
+									"y": 0,
+									"colSpan": 6,
+									"rowSpan": 4
+								},
+								"metadata": {
+									"inputs": [{
+											"name": "ComponentId",
+											"value": {
+												"SubscriptionId": "[subscription().subscriptionId]",
+												"ResourceGroup": "[resourceGroup().name]",
+												"Name": "[parameters('workspaceName')]",
+												"ResourceId": "[resourceId('Microsoft.OperationalInsights/workspaces', parameters('workspaceName'))]"
+											}
+										},
+										{
+											"name": "Query",
+											"value": "ConfigurationChange\n| where ConfigChangeType == \"WindowsServices\"\n| where SvcName == \"W3SVC\"\n| where SvcState == \"Stopped\"\n| summarize count() by Computer, bin(TimeGenerated, 7d)\n| render piechart\n"
+										},
+										{
+											"name": "TimeRange",
+											"value": "P1D"
+										},
+										{
+											"name": "Dimensions",
+											"value": {
+												"xAxis": {
+													"name": "Computer",
+													"type": "String"
+												},
+												"yAxis": [{
+													"name": "count_",
+													"type": "Int64"
+												}],
+												"splitBy": [],
+												"aggregation": "Sum"
+											}
+										},
+										{
+											"name": "Version",
+											"value": "1.0"
+										},
+										{
+											"name": "DashboardId",
+											"value": "[concat(resourceGroup().id,'/providers/Microsoft.Portal/dashboards/', variables('dashboardName'))]"
+										},
+										{
+											"name": "PartId",
+											"value": "9d7f27d9-6d9b-44f3-894a-806d7801cf0d"
+										},
+										{
+											"name": "PartTitle",
+											"value": "Analytics"
+										},
+										{
+											"name": "PartSubTitle",
+											"value": "mikqh7uwvwxn4"
+										},
+										{
+											"name": "resourceTypeMode",
+											"value": "workspace"
+										},
+										{
+											"name": "ControlType",
+											"value": "AnalyticsDonut"
+										}
+									],
+									"type": "Extension/AppInsightsExtension/PartType/AnalyticsPart",
+									"asset": {
+										"idInputName": "ComponentId",
+										"type": "ApplicationInsights"
+									}
+								}
+							}
+						}
+					}
+				}
+			},
+      "id": "[concat(resourceGroup().id,'/providers/Microsoft.Portal/dashboards/', variables('dashboardName'))]",
+			"name": "[variables('dashboardName')]",
+			"type": "Microsoft.Portal/dashboards",
+			"location": "westeurope",
+			"tags": {
+				"hidden-title": "[concat('twt-dashboard-', resourceGroup().name)]"
+			},
+			"apiVersion": "2015-08-01-preview"
+		}
+
+	]
+}

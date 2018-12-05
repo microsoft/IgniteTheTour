@@ -1,0 +1,50 @@
+﻿@page
+@model ExtendedModel
+@{
+    ViewData["Title"] = "Customer Comments";
+}
+
+<h1>Comment Analytics</h1>
+
+<form method="POST">
+<table>
+    <thead>
+        <tr>
+            <th>Timestamp</th>
+            <th colspan="2" width="30%">Comment Text</th>
+            <th>Comment Time</th>
+            <th>Sentiment</th>
+            <th>Language</th>
+            <th>English Translation</th>
+            <th>Keywords</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var comment in Model.Comments) {
+            var barclass = comment.Sentiment < 40 ? "bad" :
+                   comment.Sentiment >= 60 ? "good" : "";
+        <tr>
+            <td>@comment.TimeStamp</td>
+            <td>@comment.CommentText</td>
+            <td>
+                <button name="GetAnalysisCommentId" value="@comment.Id" aria-label="Get comment analysis">
+                    <i class="fa fa-cloud"></i>&nbsp;Analyse
+                </button>
+            </td>
+            <td>@comment.Name</td>
+            <td>
+                @if (comment.Sentiment != null) {
+                <div class="sentiment-percent">@comment.Sentiment%</div>
+                <div class="sentiment-wrapper">
+                    <div class="progress @barclass" style="width:@comment.Sentiment%"></div>
+                </div>
+                }
+            </td>
+            <td>@comment.Language</td>
+            <td>@comment.EnglishTranslation</td>
+            <td>@comment.Keywords</td>
+        </tr>
+        }
+    </tbody>
+</table>
+</form>

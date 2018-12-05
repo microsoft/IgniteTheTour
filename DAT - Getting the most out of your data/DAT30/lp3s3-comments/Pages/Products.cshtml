@@ -1,0 +1,50 @@
+@page
+@model ProductsModel
+@{
+    ViewData["Title"] = "Products";
+}
+<h1>Products</h1>
+
+<form method="POST">
+<table width="100%">
+    <thead>
+        <tr>
+            <th>SKU</th>
+            <th>Name</th>
+            <th>Price</th>
+            <th>Description</th>
+            <th width="20%">Image</th>
+            <th>Sentiment</th>
+            <th colspan="2">Tags</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var product in Model.Products) {
+            var barclass = product.AverageSentiment < 40 ? "bad" :
+                   product.AverageSentiment >= 60 ? "good" : "";
+            var tagConfidence = (product.AutoTagConfidence != null ? $"[{product.AutoTagConfidence}%]" : "");
+        <tr>
+            <td>@product.Sku</td>
+            <td>@product.Name</td>
+            <td>$@product.Price</td>
+            <td>@product.Description</td>
+            <td><img style="max-width:200px;" src="@product.ImageUrl" /></td>
+            <td>
+                @if (product.AverageSentiment != null) {
+                <div class="sentiment-percent">@product.AverageSentiment%</div>
+                <div class="sentiment-wrapper">
+                    <div class="progress @barclass" style="width:@product.AverageSentiment%"></div>
+                </div>
+                }
+            </td>
+            <td>@product.Tags<br/>@tagConfidence</td>
+            <td>
+                <button name="ProductId" value="@product.Id" aria-label="Get automatic tags">
+                    <i class="fa fa-cloud"></i>&nbsp;Analyse
+                </button>
+            </td>
+        </tr>
+        }
+    </tbody>
+</table>
+</form>
