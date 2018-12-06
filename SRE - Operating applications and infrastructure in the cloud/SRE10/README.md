@@ -4,6 +4,14 @@ Deploying applications to the cloud can be as simple as clicking the mouse a few
 
 In this module, you'll learn how Tailwind Traders uses automation with Azure Resource Management (ARM) templates to provision infrastructure, reducing the chances of errors and inconsistency caused by manual point and click. Once in place, we move on to deploying our applications using continuous integration and continuous delivery, powered by Azure DevOps.
 
+## Services Used
+
+- App Services
+- Azure Resource Manager
+- Azure Container Instances
+- Azure Kubernetes Service
+- Azure DevOps
+
 ## Setting up a demo environment
 
 *In Azure CloudShell*
