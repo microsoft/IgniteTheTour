@@ -1,5 +1,7 @@
 # SRE20 - Monitoring Your Infrastructure and Applications in Production
 
+Tailwind Traders runs its entire business in the cloud and we need to understand what is happening with our cloud resources 24/7. To do that, we've implemented Microsoft Azure's monitoring solutions.
+
 In this session, you'll learn how we use Azure Monitor to understand and visualize time series data using Application Insights and Log Analytics. We'll also monitor the health of our cloud services using Azure Service Health. With a more observable and data rich system Tailwind Trader’s engineers are now poised to know about, respond to, and resolve problems in real-time before they impact users and the business' bottom line.
 
 ## Services Used
