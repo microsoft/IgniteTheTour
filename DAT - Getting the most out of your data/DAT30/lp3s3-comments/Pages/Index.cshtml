@@ -1,0 +1,25 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Customer Comments";
+}
+<h1>Comments</h1>
+
+<table width="100%">
+    <thead>
+        <tr>
+            <th width="15%">Timestamp</th>
+            <th>Comment Text</th>
+            <th width="15%">Comment Time</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var comment in Model.Comments) {
+        <tr>
+            <td>@comment.TimeStamp</td>
+            <td>@comment.CommentText</td>
+            <td>@comment.Name</td>
+        </tr>
+        }
+    </tbody>
+</table>

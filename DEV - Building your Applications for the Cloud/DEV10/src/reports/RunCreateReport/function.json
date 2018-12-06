@@ -1,0 +1,25 @@
+{
+  "disabled": false,
+  "bindings": [
+    {
+      "authLevel": "anonymous",
+      "type": "httpTrigger",
+      "direction": "in",
+      "name": "req",
+      "methods": ["get", "post"]
+    },
+    {
+      "type": "http",
+      "direction": "out",
+      "name": "res"
+    },
+    {
+      "type": "sendGrid",
+      "name": "message",
+      "apiKey": "SENDGRID_API_KEY",
+      "to": "burke.holland@microsoft.com",
+      "from": "tailwind.reports@tailwind.com",
+      "direction": "out"
+    }
+  ]
+}

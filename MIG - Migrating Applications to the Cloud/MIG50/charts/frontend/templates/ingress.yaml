@@ -1,0 +1,15 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name:  {{ template "fullname" . }}
+  annotations:
+    kubernetes.io/ingress.class: addon-http-application-routing
+spec:
+  rules:
+  - host: {{ template "fullname" . }}.{{ .Values.applicationroutingzone }}
+    http:
+      paths:
+      - backend:
+          serviceName: {{ template "fullname" . }}
+          servicePort: 80
+        path: /

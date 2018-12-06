@@ -1,0 +1,19 @@
+{
+  "disabled": false,
+  "bindings": [
+    {
+      "name": "myTimer",
+      "type": "timerTrigger",
+      "direction": "in",
+      "schedule": "0 0 */24 * * *"
+    },
+    {
+      "type": "sendGrid",
+      "name": "message",
+      "apiKey": "SENDGRID_API_KEY",
+      "to": "someone@microsoft.com",
+      "from": "tailwind.reports@tailwind.com",
+      "direction": "out"
+    }
+  ]
+}

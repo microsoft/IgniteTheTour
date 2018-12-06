@@ -1,0 +1,231 @@
+{
+	"$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"adminUsername": {
+			"type": "string"
+		},
+		"adminPassword": {
+			"type": "securestring"
+		},
+		"vmCount": {
+			"type": "int"
+		},
+		"registrationKey": {
+			"type": "string"
+		},
+		"registrationUrl": {
+			"type": "string"
+		},
+		"nodeConfigurationName": {
+			"type": "string"
+		},
+		"logAnalyticsName": {
+			"type": "string"
+		},
+		"subnetName": {
+			"type": "string"
+		},
+		"virtualNetworkName": {
+			"type": "string"
+		}
+	},
+	"variables": {
+		"nicName": "virtual-nic-windows-",
+		"publicIPAddressName": "public-ip-windows-",
+		"vmName": "win-vm-",
+		"windowsOSVersion": "2016-Datacenter",
+		"subnetRef": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworkName'), parameters('subnetName'))]",
+		"dscExtensionModulesUrl": "https://github.com/Azure/azure-quickstart-templates/raw/master/dsc-extension-azure-automation-pullserver/UpdateLCMforAAPull.zip",
+		"dscExtensionConfigurationFunction": "UpdateLCMforAAPull.ps1\\ConfigureLCMforAAPull"
+	},
+	"resources": [{
+			"apiVersion": "2016-03-30",
+			"type": "Microsoft.Network/publicIPAddresses",
+			"name": "[concat(variables('publicIPAddressName'), copyIndex())]",
+			"location": "[resourceGroup().location]",
+			"properties": {
+				"publicIPAllocationMethod": "Dynamic"
+			},
+			"copy": {
+				"name": "pipcopy",
+				"count": "[parameters('vmCount')]"
+			}
+		},
+		{
+			"apiVersion": "2016-03-30",
+			"type": "Microsoft.Network/networkInterfaces",
+			"name": "[concat(variables('nicName'), copyIndex())]",
+			"location": "[resourceGroup().location]",
+			"dependsOn": [
+				"[resourceId('Microsoft.Network/publicIPAddresses/', concat(variables('publicIPAddressName'), copyIndex()))]"
+			],
+			"properties": {
+				"ipConfigurations": [{
+					"name": "ipconfig1",
+					"properties": {
+						"privateIPAllocationMethod": "Dynamic",
+						"publicIPAddress": {
+							"id": "[resourceId('Microsoft.Network/publicIPAddresses/', concat(variables('publicIPAddressName'), copyIndex()))]"
+						},
+						"subnet": {
+							"id": "[variables('subnetRef')]"
+						}
+					}
+				}]
+			},
+			"copy": {
+				"name": "niccopy",
+				"count": "[parameters('vmCount')]"
+			}
+		},
+		{
+			"apiVersion": "2017-03-30",
+			"type": "Microsoft.Compute/virtualMachines",
+			"name": "[concat(variables('vmName'), copyIndex())]",
+			"location": "[resourceGroup().location]",
+			"dependsOn": [
+				"[concat(variables('nicName'), copyIndex())]"
+			],
+			"properties": {
+				"hardwareProfile": {
+					"vmSize": "Standard_A2"
+				},
+				"osProfile": {
+					"computerName": "[concat(variables('vmName'), copyIndex())]",
+					"adminUsername": "[parameters('adminUsername')]",
+					"adminPassword": "[parameters('adminPassword')]"
+				},
+				"storageProfile": {
+					"imageReference": {
+						"publisher": "MicrosoftWindowsServer",
+						"offer": "WindowsServer",
+						"sku": "[variables('windowsOSVersion')]",
+						"version": "latest"
+					},
+					"osDisk": {
+						"createOption": "FromImage"
+					}
+				},
+				"networkProfile": {
+					"networkInterfaces": [{
+						"id": "[resourceId('Microsoft.Network/networkInterfaces', concat(variables('nicName'), copyIndex()))]"
+					}]
+				}
+			},
+			"copy": {
+				"name": "vmcopy",
+				"count": "[parameters('vmCount')]"
+			}
+		},
+		{
+			"type": "Microsoft.Compute/virtualMachines/extensions",
+			"name": "[concat(variables('vmName'), copyIndex(), '/Microsoft.Powershell.DSC')]",
+			"apiVersion": "2015-06-15",
+			"location": "[resourceGroup().location]",
+			"dependsOn": [
+				"[concat('Microsoft.Compute/virtualMachines/', variables('vmName'), copyIndex())]"
+			],
+			"properties": {
+				"publisher": "Microsoft.Powershell",
+				"type": "DSC",
+				"typeHandlerVersion": "2.76",
+				"protectedSettings": {
+					"Items": {
+						"registrationKeyPrivate": "[parameters('registrationKey')]"
+					}
+				},
+				"settings": {
+					"ModulesUrl": "[variables('dscExtensionModulesUrl')]",
+					"SasToken": "",
+					"ConfigurationFunction": "[variables('dscExtensionConfigurationFunction')]",
+					"Properties": [{
+							"Name": "RegistrationKey",
+							"Value": {
+								"UserName": "PLACEHOLDER_DONOTUSE",
+								"Password": "PrivateSettingsRef:registrationKeyPrivate"
+							},
+							"TypeName": "System.Management.Automation.PSCredential"
+						},
+						{
+							"Name": "RegistrationUrl",
+							"Value": "[parameters('registrationUrl')]",
+							"TypeName": "System.String"
+						},
+						{
+							"Name": "NodeConfigurationName",
+							"Value": "[parameters('nodeConfigurationName')]",
+							"TypeName": "System.String"
+						},
+						{
+							"Name": "ConfigurationMode",
+							"Value": "ApplyAndMonitor",
+							"TypeName": "System.String"
+						},
+						{
+							"Name": "ConfigurationModeFrequencyMins",
+							"Value": 15,
+							"TypeName": "System.Int32"
+						},
+						{
+							"Name": "RefreshFrequencyMins",
+							"Value": 30,
+							"TypeName": "System.Int32"
+						},
+						{
+							"Name": "RebootNodeIfNeeded",
+							"Value": true,
+							"TypeName": "System.Boolean"
+						},
+						{
+							"Name": "ActionAfterReboot",
+							"Value": "ContinueConfiguration",
+							"TypeName": "System.String"
+						},
+						{
+							"Name": "AllowModuleOverwrite",
+							"Value": false,
+							"TypeName": "System.Boolean"
+						}
+					]
+				}
+			},
+			"copy": {
+				"name": "dsccopy",
+				"count": "[parameters('vmCount')]"
+			}
+		},
+		{
+            "type": "Microsoft.Compute/virtualMachines/extensions",
+            "apiVersion": "2017-03-30",
+			"name": "[concat(variables('vmName'), copyIndex(), '/Microsoft.Monitoring')]",
+			"location": "[resourceGroup().location]",
+			"dependsOn": [
+				"[concat('Microsoft.Compute/virtualMachines/', variables('vmName'), copyIndex())]"
+			],
+            "properties": {
+                "publisher": "Microsoft.EnterpriseCloud.Monitoring",
+                "type": "MicrosoftMonitoringAgent",
+                "typeHandlerVersion": "1.0",
+                "autoUpgradeMinorVersion": true,
+                "settings": {
+                    "workspaceId": "[reference(resourceId(resourceGroup().name, 'Microsoft.OperationalInsights/workspaces/', parameters('logAnalyticsName')), '2015-11-01-preview').customerId]",
+					"azureResourceId": "[resourceId('Microsoft.Compute/virtualMachines/', concat(variables('vmName'), copyIndex()))]"
+                },
+                "protectedSettings": {
+                    "workspaceKey": "[listKeys(resourceId(resourceGroup().name, 'Microsoft.OperationalInsights/workspaces/', parameters('logAnalyticsName')), '2015-11-01-preview').primarySharedKey]"
+                }
+			},
+			"copy": {
+				"name": "dsccopy",
+				"count": "[parameters('vmCount')]"
+			}
+        }
+	],
+	"outputs": {
+		"vmNamePrefix":{
+			"type": "string",
+			"value": "[variables('vmName')]"
+		}
+	}
+}

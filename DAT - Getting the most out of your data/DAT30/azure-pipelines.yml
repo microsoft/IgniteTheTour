@@ -1,0 +1,53 @@
+# ASP.NET Core
+# Build and test ASP.NET Core projects targeting .NET Core.
+# Add steps that run tests, create a NuGet package, deploy, and more:
+# https://docs.microsoft.com/azure/devops/pipelines/languages/dotnet-core
+
+trigger:
+  - master
+
+pr:
+  - master
+
+pool:
+  vmImage: 'Ubuntu 16.04'
+
+variables:
+  buildConfiguration: 'Release'
+
+steps:
+- script: dotnet build lp3s3-comments/*.csproj --configuration $(buildConfiguration)
+  displayName: 'dotnet build web app $(buildConfiguration)'
+
+- script: dotnet build lp3s3-comments-function/*.csproj --configuration $(buildConfiguration)
+  displayName: 'dotnet build function $(buildConfiguration)'
+
+- script: dotnet publish lp3s3-comments/*.csproj -o $(Build.ArtifactStagingDirectory)/web --configuration $(buildConfiguration)
+  displayName: dotnet publish web app
+
+- script: dotnet publish lp3s3-comments-function/*.csproj -o $(Build.ArtifactStagingDirectory)/function --configuration $(buildConfiguration)
+  displayName: dotnet publish function
+
+- task: PublishBuildArtifacts@1
+  displayName: 'publish web artifact'
+  inputs:
+    pathtoPublish: '$(Build.ArtifactStagingDirectory)/web'
+    artifactName: 'web'
+
+- task: PublishBuildArtifacts@1
+  displayName: 'publish function artifact'
+  inputs:
+    pathtoPublish: '$(Build.ArtifactStagingDirectory)/function'
+    artifactName: 'function'
+
+- task: PublishBuildArtifacts@1
+  displayName: 'publish ARM template'
+  inputs:
+    pathtoPublish: '$(Build.SourcesDirectory)/ARM'
+    artifactName: 'arm'
+
+- task: PublishBuildArtifacts@1
+  displayName: 'publish SQL scripts'
+  inputs:
+    pathtoPublish: '$(Build.SourcesDirectory)/database'
+    artifactName: 'sql'

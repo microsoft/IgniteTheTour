@@ -1,0 +1,20 @@
+config:
+  target: http://tailwindtraders-inventory.azurewebsites.net
+  phases:
+    -
+      duration: 2
+      arrivalRate: 2000
+  variables:
+    sku:
+      - "2051"
+      - "2053"
+      - "2057"
+      - "2059"
+      - "2088"
+scenarios:
+  -
+    name: "Grab item"
+    flow:
+      -
+        get:
+          url: "/api/Get/{{ sku }}"
