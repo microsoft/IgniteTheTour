@@ -41,25 +41,6 @@ There is an automated script that will deploy a resource group, plus the Fronten
 
 Change into the `deployment` directory and run `deploy.sh`.
 
-
-## Train the Trainer content
-
-### Session Abstract
-
-Building a resilient application means leaning on the distributed nature of the cloud. In this talk, we’ll show you how Tailwind Traders reduced single point of failure by deploying backend services to multiple regions using Azure App Service and Azure Traffic Manager. We’ll then create a CDN using Azure Blob Storage to deliver static assets such as images and frontend code. Finally, we’ll deploy our data with full geo-redundancy using Cosmos DB and Azure SQL Database. 
-
-Once we’ve set everything up, we’ll test it out and see how our application handles, and recovers from, catastrophic failure.
-
-### Session Story Summary
-
-Tailwind Traders is a global company that requires its applications to be accessible worldwide and be resilient to failures.
-
-#### Introduction
-
-Tailwind Traders is has an inventory management application that is comprised of a single page application frontend, and two backend services for managing product and inventory data. We'll look at how the different parts of the application interact with each other, and how we leverage services in Azure to make the app resilient.
-
-> Note: We will now talk about a few different Azure services. Make sure we tie each back to how they make it easy to build an application that is distributed and resilient.
-
 #### Azure Key Vault
 
 Azure Key Vault provides a centralized service for managing secrets for applications. Instead of passing secrets around in emails and messaging apps, secrets can be placed in Azure Key Vault by an administrator, and access to the secrets can be given to identities in Azure Active Directory such as users or applications. As secrets or access permissions change, we can modify them in Key Vault.
