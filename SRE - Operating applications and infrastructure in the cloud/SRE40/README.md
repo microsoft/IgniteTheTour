@@ -4,6 +4,13 @@ Tailwind Traders has realized that it will need to focus on scaling their applic
 
 In this module, you will learn about scaling our application and infrastructure for increased loads as well as how to distribute workloads with Azure Front Door and Azure Availability Zones to protect against localized failures
 
+## Services Used
+
+- App Services Scaling 
+- Azure AZ & Regions 
+- Cosmos DB 
+- Azure Front Door
+
 ## Author
 
 Dean Bryen | dean.bryen@microsoft.com | [@deanbryen](https://twitter.com/deanbryen)
