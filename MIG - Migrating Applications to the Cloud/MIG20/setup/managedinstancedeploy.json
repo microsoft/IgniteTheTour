@@ -1,0 +1,281 @@
+{
+    "$schema": "http://schema.management.azure.com/schemas/2014-04-01-preview/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.1",
+    "parameters": {
+        "administratorLogin": {
+            "type": "string"
+        },
+        "administratorLoginPassword": {
+            "type": "securestring"
+        },
+        "location": {
+            "type": "string",
+            "defaultValue": "eastus"
+        },
+        "managedInstanceName": {
+            "type": "string"
+        },
+        "virtualNetworkResourceGroupName": {
+            "type": "string"
+        },
+        "virtualNetworkName": {
+            "type": "string",
+            "defaultValue": "sqlmivnet"
+        },
+        "subnetName": {
+            "type": "string",
+            "defaultValue": "sqlmisubnet"
+        },
+        "skuName": {
+            "defaultValue": "GP_Gen4",
+            "type": "string"
+        },
+        "skuEdition": {
+            "defaultValue": "GeneralPurpose",
+            "type": "string"
+        },
+        "storageSizeInGB": {
+            "defaultValue": "32",
+            "type": "int"
+        },
+        "vCores": {
+            "defaultValue": "16",
+            "type": "int"
+        },
+        "licenseType": {
+            "defaultValue": "LicenseIncluded",
+            "type": "string"
+        },
+        "hardwareFamily": {
+            "defaultValue": "Gen4",
+            "type": "string"
+        }
+    },
+    "variables": {
+        "routeTableName": "[concat('rt-', parameters('managedInstanceName'))]",
+        "networkSecurityGroupName": "[concat('nsg-', parameters('managedInstanceName'))]"
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Network/networkSecurityGroups",
+            "name": "[variables('networkSecurityGroupName')]",
+            "apiVersion": "2017-10-01",
+            "location": "[parameters('location')]",
+            "properties": {
+                "securityRules": [
+                    {
+                        "name": "allow_management_inbound",
+                        "properties": {
+                            "description": "Allow inbound management traffic",
+                            "protocol": "Tcp",
+                            "sourcePortRange": "*",
+                            "destinationPortRanges": [
+                                "9000",
+                                "9003",
+                                "1438",
+                                "1440",
+                                "1452"
+                            ],
+                            "sourceAddressPrefix": "*",
+                            "destinationAddressPrefix": "*",
+                            "access": "Allow",
+                            "priority": 100,
+                            "direction": "Inbound"
+                        }
+                    },
+                    {
+                        "name": "allow_misubnet_inbound",
+                        "properties": {
+                            "description": "Allow inbound traffic inside the subnet",
+                            "protocol": "*",
+                            "sourcePortRange": "*",
+                            "destinationPortRange": "*",
+                            "sourceAddressPrefix": "[reference(resourceId(parameters('virtualNetworkResourceGroupName'), 'Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworkName'), parameters('subnetName')), '2017-10-01').addressPrefix]",
+                            "destinationAddressPrefix": "*",
+                            "access": "Allow",
+                            "priority": 200,
+                            "direction": "Inbound"
+                        }
+                    },
+                    {
+                        "name": "allow_health_probe_inbound",
+                        "properties": {
+                            "description": "Allow health probe",
+                            "protocol": "*",
+                            "sourcePortRange": "*",
+                            "destinationPortRange": "*",
+                            "sourceAddressPrefix": "AzureLoadBalancer",
+                            "destinationAddressPrefix": "*",
+                            "access": "Allow",
+                            "priority": 300,
+                            "direction": "Inbound"
+                        }
+                    },
+                    {
+                        "name": "allow_tds_inbound",
+                        "properties": {
+                            "description": "Allow access to data",
+                            "protocol": "Tcp",
+                            "sourcePortRange": "*",
+                            "destinationPortRange": "1433",
+                            "sourceAddressPrefix": "VirtualNetwork",
+                            "destinationAddressPrefix": "*",
+                            "access": "Allow",
+                            "priority": 1000,
+                            "direction": "Inbound"
+                        }
+                    },
+                    {
+                        "name": "deny_all_inbound",
+                        "properties": {
+                            "description": "Deny all other inbound traffic",
+                            "protocol": "*",
+                            "sourcePortRange": "*",
+                            "destinationPortRange": "*",
+                            "sourceAddressPrefix": "*",
+                            "destinationAddressPrefix": "*",
+                            "access": "Deny",
+                            "priority": 4096,
+                            "direction": "Inbound"
+                        }
+                    },
+                    {
+                        "name": "allow_management_outbound",
+                        "properties": {
+                            "description": "Allow outbound management traffic",
+                            "protocol": "Tcp",
+                            "sourcePortRange": "*",
+                            "destinationPortRanges": [
+                                "80",
+                                "443",
+                                "12000"
+                            ],
+                            "sourceAddressPrefix": "*",
+                            "destinationAddressPrefix": "*",
+                            "access": "Allow",
+                            "priority": 100,
+                            "direction": "Outbound"
+                        }
+                    },
+                    {
+                        "name": "allow_misubnet_outbound",
+                        "properties": {
+                            "description": "Allow outbound traffic inside the subnet",
+                            "protocol": "*",
+                            "sourcePortRange": "*",
+                            "destinationPortRange": "*",
+                            "sourceAddressPrefix": "*",
+                            "destinationAddressPrefix": "[reference(resourceId(parameters('virtualNetworkResourceGroupName'), 'Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworkName'), parameters('subnetName')), '2017-10-01').addressPrefix]",
+                            "access": "Allow",
+                            "priority": 200,
+                            "direction": "Outbound"
+                        }
+                    },
+                    {
+                        "name": "deny_all_outbound",
+                        "properties": {
+                            "description": "Deny all other outbound traffic",
+                            "protocol": "*",
+                            "sourcePortRange": "*",
+                            "destinationPortRange": "*",
+                            "sourceAddressPrefix": "*",
+                            "destinationAddressPrefix": "*",
+                            "access": "Deny",
+                            "priority": 4096,
+                            "direction": "Outbound"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "type": "Microsoft.Network/routeTables",
+            "name": "[variables('routeTableName')]",
+            "apiVersion": "2018-02-01",
+            "location": "[parameters('location')]",
+            "properties": {
+                "disableBgpRoutePropagation": false,
+                "routes": [
+                    {
+                        "name": "default",
+                        "properties": {
+                            "addressPrefix": "0.0.0.0/0",
+                            "nextHopType": "Internet"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "apiVersion": "2017-05-10",
+            "name": "updateSubnetTemplate",
+            "type": "Microsoft.Resources/deployments",
+            "resourceGroup": "[parameters('virtualNetworkResourceGroupName')]",
+            "dependsOn": [
+                "[variables('routeTableName')]",
+                "[variables('networkSecurityGroupName')]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "template": {
+                    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                    "contentVersion": "1.0.0.0",
+                    "resources": [
+                        {
+                            "type": "Microsoft.Network/virtualNetworks/subnets",
+                            "name": "[concat(parameters('virtualNetworkName'), '/', parameters('subnetName'))]",
+                            "apiVersion": "2017-10-01",
+                            "properties": {
+                                "addressPrefix": "[reference(resourceId(parameters('virtualNetworkResourceGroupName'), 'Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworkName'), parameters('subnetName')), '2017-10-01').addressPrefix]",
+                                "routeTable": {
+                                    "id": "[resourceId('Microsoft.Network/routeTables', variables('routeTableName'))]"
+                                },
+                                "networkSecurityGroup": {
+                                    "id": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('networkSecurityGroupName'))]"
+                                }
+                            }
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Sql/managedInstances",
+            "sku": {
+                "name": "[parameters('skuName')]",
+                "tier": "[parameters('skuEdition')]"
+            },
+            "name": "[parameters('managedInstanceName')]",
+            "apiVersion": "2015-05-01-preview",
+            "location": "[parameters('location')]",
+            "identity": {
+                "type": "SystemAssigned"
+            },
+            "properties": {
+                "administratorLogin": "[parameters('administratorLogin')]",
+                "administratorLoginPassword": "[parameters('administratorLoginPassword')]",
+                "subnetId": "[resourceId(parameters('virtualNetworkResourceGroupName'), 'Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworkName'), parameters('subnetName'))]",
+                "storageSizeInGB": "[parameters('storageSizeInGB')]",
+                "vCores": "[parameters('vCores')]",
+                "licenseType": "[parameters('licenseType')]",
+                "hardwareFamily": "[parameters('hardwareFamily')]"
+            },
+            "dependsOn": [
+                "updateSubnetTemplate"
+            ]
+        },
+        {
+            "name": "[concat(parameters('managedInstanceName'), '/tailwind')]",
+            "type": "Microsoft.Sql/managedInstances/databases",
+            "apiVersion": "2017-03-01-preview",
+            "location": "[parameters('location')]",
+            "properties": {
+              "collation": "Latin1_General_100_CS_AS_SC"
+            },
+            "dependsOn": [
+                "[concat('Microsoft.Sql/managedInstances/', parameters('managedInstanceName'))]"
+            ]
+          }
+        
+    ]
+}

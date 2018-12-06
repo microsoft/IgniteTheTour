@@ -1,0 +1,151 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+      "appServicePlanName": {
+        "type": "string",
+        "defaultValue": "tw-svc-SRE10",
+        "metadata": {
+            "description": "The app service to run the web apps in."
+        }
+      },
+      "frontendAppName": {
+        "type": "string",
+        "defaultValue" : "tw-frontend-SRE10",
+        "metadata": {
+          "description": "Base name of the resource such as web app name and app service plan "
+        },
+        "minLength": 2
+      },
+      "inventoryServiceName": {
+        "type": "string",
+        "defaultValue" : "tw-inventory-SRE10",
+        "metadata": {
+          "description": "Base name of the resource such as web app name and app service plan "
+        },
+        "minLength": 2
+      },
+      "sqlConnectionString": {
+        "type": "string",
+        "metadata": {
+            "description": "SQL connection string for the inventory service."
+        }
+      },
+      "productServiceName": {
+        "type": "string",
+        "defaultValue" : "tw-product-SRE10",
+        "metadata": {
+          "description": "Base name of the resource such as web app name and app service plan "
+        },
+        "minLength": 2
+      },
+      "cosmosConnectionString": {
+        "type": "string",
+        "metadata": {
+            "description": "CosmosDB connection string for the product service."
+        }
+      }
+    },
+    "variables": {
+      "location": "[resourceGroup().location]",
+      "sku": "PremiumV2",
+      "skuCode": "P1v2"
+    },
+    "resources": [
+      {
+        "type": "Microsoft.Web/serverfarms",
+        "apiVersion": "2017-08-01",
+        "kind": "linux",
+        "name": "[parameters('appServicePlanName')]",
+        "location": "[variables('location')]",
+        "comments": "This app service plan is used for the web app and slots.",
+        "dependsOn": [],
+        "sku": {
+          "Tier": "[variables('sku')]",
+          "Name": "[variables('skuCode')]"
+        },
+        "properties": {
+          "name": "[parameters('appServicePlanName')]",
+          "workerSizeId": "3",
+          "reserved": true,
+          "numberOfWorkers": "1",
+          "hostingEnvironment": ""
+        }
+      },
+      {
+        "type": "Microsoft.Web/sites",
+        "apiVersion": "2016-08-01",
+        "kind": "app",
+        "name": "[parameters('frontendAppName')]",
+        "location": "[variables('location')]",
+        "comments": "This is the web app, also the default 'nameless' slot.",
+        "properties": {
+          "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', parameters('appServicePlanName'))]",
+          "siteConfig": {
+            "linuxFxVersion": "node|8.11",
+            "appSettings": [
+            ]
+          },
+          "hostingEnvironment": ""
+          
+        },
+        "dependsOn": [
+          "[resourceId('Microsoft.Web/serverfarms', parameters('appServicePlanName'))]"
+        ]
+      },
+      {
+        "type": "Microsoft.Web/sites",
+        "apiVersion": "2016-08-01",
+        "kind": "app",
+        "name": "[parameters('inventoryServiceName')]",
+        "location": "[variables('location')]",
+        "comments": "This is the web app, also the default 'nameless' slot.",
+        "properties": {
+          "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', parameters('appServicePlanName'))]",
+          "siteConfig": {
+            "linuxFxVersion": "DOTNETCORE|2.1",
+            "appCommandLine": "dotnet InventoryService.Api.dll",          
+            "appSettings": [
+            ],
+            "connectionStrings": [
+              {
+                "name": "InventoryContext",
+                "connectionString": "[parameters('sqlConnectionString')]",
+                "type": "SQLAzure"
+              }
+            ]
+          },
+          "hostingEnvironment": ""
+        },
+        "dependsOn": [
+          "[resourceId('Microsoft.Web/serverfarms', parameters('appServicePlanName'))]"
+        ]
+      },
+      {
+        "type": "Microsoft.Web/sites",
+        "apiVersion": "2016-08-01",
+        "kind": "app",
+        "name": "[parameters('productServiceName')]",
+        "location": "[variables('location')]",
+        "comments": "This is the web app, also the default 'nameless' slot.",
+        "properties": {
+          "name": "[parameters('productServiceName')]",
+          "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', parameters('appServicePlanName'))]",
+          "siteConfig": {
+              "linuxFxVersion": "node|8.11",
+              "appSettings": [
+                {
+                  "name": "DB_CONNECTION_STRING",
+                  "value": "[parameters('cosmosConnectionString')]"
+                }
+              ]
+          },
+          "hostingEnvironment": ""
+          
+        },
+        "dependsOn": [
+          "[resourceId('Microsoft.Web/serverfarms', parameters('appServicePlanName'))]"
+        ]
+      }
+    ]
+  }

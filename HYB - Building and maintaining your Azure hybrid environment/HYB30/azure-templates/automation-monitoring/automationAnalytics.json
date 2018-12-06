@@ -1,0 +1,263 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"TeamsWebHook": {
+			"type": "string"
+		},
+		"insights-sku": {
+			"type": "string"
+		},
+		"tenantID": {
+			"type": "string"
+		},
+		"appId": {
+			"type": "string"
+		},
+		"secret": {
+			"type": "string"
+		}
+	},
+	"variables": {
+		"linuxConfigurationName": "linuxpackage",
+		"configurationName": "windowsfeatures",
+		"configurationDescription": "A configuration for installing IIS.",
+		"configurationURI": "https://raw.githubusercontent.com/neilpeterson/azure-automation-dsc/master/support-scripts/windows-config.ps1",
+		"linuxConfigurationURI": "https://raw.githubusercontent.com/neilpeterson/azure-automation-dsc/master/support-scripts/linux-config.ps1",
+		"nodeConfigurationName": "windowsfeatures.localhost",
+		"linuxNodeConfigurationName": "linuxpackage.localhost",
+		"automationAccountName": "[uniqueString(resourceGroup().id)]",
+		"moduleUri": "https://devopsgallerystorage.blob.core.windows.net/packages/nx.1.0.0.nupkg",
+		"teamsRunbook": "https://raw.githubusercontent.com/neilpeterson/azure-automation-dsc/master/support-scripts/alert-to-teams-runbook.ps1",
+		"teamsVariableName": "TeamsURI",
+		"tenantVariableName": "TenantID",
+		"runbookName": "W3SVCRemediation",
+		"credentialName": "AzureRM",
+		"resourceGroupName": "[resourceGroup().name]",
+		"location": "[resourceGroup().location]"
+
+	},
+	"resources": [{
+			"name": "[variables('automationAccountName')]",
+			"type": "Microsoft.Automation/automationAccounts",
+			"apiVersion": "2015-10-31",
+			"location": "[resourceGroup().location]",
+			"comments": "Automation account for OMS",
+			"properties": {
+				"sku": {
+					"name": "Basic"
+				}
+			},
+			"resources": [{
+					"name": "nx",
+					"type": "modules",
+					"apiVersion": "2018-01-15",
+					"tags": {},
+					"dependsOn": [
+						"[concat('Microsoft.Automation/automationAccounts/', variables('automationAccountName'))]"
+					],
+					"properties": {
+						"contentLink": {
+							"uri": "[variables('moduleUri')]"
+						}
+					}
+				},
+				{
+					"name": "[variables('linuxConfigurationName')]",
+					"type": "configurations",
+					"apiVersion": "2015-10-31",
+					"location": "[resourceGroup().location]",
+					"tags": {},
+					"dependsOn": [
+						"[concat('Microsoft.Automation/automationAccounts/', variables('automationAccountName'))]"
+					],
+					"properties": {
+						"logVerbose": "false",
+						"description": "[variables('configurationDescription')]",
+						"state": "Published",
+						"overwrite": "true",
+						"source": {
+							"type": "uri",
+							"value": "[variables('linuxConfigurationURI')]"
+						}
+					}
+				},
+				{
+					"name": "[variables('configurationName')]",
+					"type": "configurations",
+					"apiVersion": "2015-10-31",
+					"location": "[resourceGroup().location]",
+					"tags": {},
+					"dependsOn": [
+						"[concat('Microsoft.Automation/automationAccounts/', variables('automationAccountName'))]"
+					],
+					"properties": {
+						"logVerbose": "false",
+						"description": "[variables('configurationDescription')]",
+						"state": "Published",
+						"overwrite": "true",
+						"source": {
+							"type": "uri",
+							"value": "[variables('configurationURI')]"
+						}
+					}
+				},
+				{
+					"name": "[variables('configurationName')]",
+					"type": "compilationjobs",
+					"apiVersion": "2018-01-15",
+					"location": "[resourceGroup().location]",
+					"tags": {},
+					"dependsOn": [
+						"[concat('Microsoft.Automation/automationAccounts/', variables('automationAccountName'))]",
+						"[concat('Microsoft.Automation/automationAccounts/', variables('automationAccountName'), '/configurations/', variables('configurationName'))]"
+					],
+					"properties": {
+						"configuration": {
+							"name": "[variables('configurationName')]"
+						}
+					}
+				},
+				{
+					"name": "[variables('linuxConfigurationName')]",
+					"type": "compilationjobs",
+					"apiVersion": "2018-01-15",
+					"location": "[resourceGroup().location]",
+					"tags": {},
+					"dependsOn": [
+						"[concat('Microsoft.Automation/automationAccounts/', variables('automationAccountName'))]",
+						"[concat('Microsoft.Automation/automationAccounts/', variables('automationAccountName'), '/configurations/', variables('linuxConfigurationName'))]",
+						"[concat('Microsoft.Automation/automationAccounts/', variables('automationAccountName'), '/modules/nx')]"
+					],
+					"properties": {
+						"configuration": {
+							"name": "[variables('linuxConfigurationName')]"
+						}
+					}
+				},
+				{
+					"name": "[variables('teamsVariableName')]",
+					"type": "variables",
+					"apiVersion": "2015-10-31",
+					"dependsOn": [
+						"[resourceId('Microsoft.Automation/automationAccounts/', variables('automationAccountName'))]"
+					],
+					"tags": {},
+					"properties": {
+						"description": "MS Teams Webhook Address",
+						"Value": "[concat('\"', parameters('TeamsWebHook'), '\"')]"
+					}
+				},
+				{
+					"name": "[variables('tenantVariableName')]",
+					"type": "variables",
+					"apiVersion": "2015-10-31",
+					"dependsOn": [
+						"[resourceId('Microsoft.Automation/automationAccounts/', variables('automationAccountName'))]"
+					],
+					"tags": {},
+					"properties": {
+						"description": "Tenant ID",
+						"Value": "[concat('\"', parameters('tenantID'), '\"')]",
+						"isEncrypted": true
+					}
+				},
+				{
+					"name": "ResourceGroupName",
+					"type": "variables",
+					"apiVersion": "2015-10-31",
+					"dependsOn": [
+						"[resourceId('Microsoft.Automation/automationAccounts/', variables('automationAccountName'))]"
+					],
+					"tags": {},
+					"properties": {
+						"description": "VM Resource Group Location",
+						"Value": "[concat('\"', variables('resourceGroupName'), '\"')]"
+					}
+				},
+				{
+					"name": "Location",
+					"type": "variables",
+					"apiVersion": "2015-10-31",
+					"dependsOn": [
+						"[resourceId('Microsoft.Automation/automationAccounts/', variables('automationAccountName'))]"
+					],
+					"tags": {},
+					"properties": {
+						"description": "VM Resource Group Location",
+						"Value": "[concat('\"', variables('location'), '\"')]"
+					}
+				},
+				{
+					"apiVersion": "2015-10-31",
+					"type": "runbooks",
+					"name": "[variables('runbookName')]",
+					"location": "[resourceGroup().location]",
+					"dependsOn": [
+						"[resourceId('Microsoft.Automation/automationAccounts/', variables('automationAccountName'))]"
+					],
+					"properties": {
+						"runbookType": "PowerShell",
+						"logProgress": false,
+						"logVerbose": true,
+						"publishContentLink": {
+							"uri": "[variables('teamsRunbook')]"
+						}
+					}
+				},
+				{
+					"name": "[variables('credentialName')]",
+					"type": "credentials",
+					"apiVersion": "2015-10-31",
+					"dependsOn": [
+						"[resourceId('Microsoft.Automation/automationAccounts/', variables('automationAccountName'))]"
+					],
+					"properties": {
+						"userName": "[parameters('appId')]",
+						"password": "[parameters('secret')]"
+					}
+				}
+			]
+		},
+		{
+			"type": "Microsoft.OperationalInsights/workspaces",
+			"name": "[variables('automationAccountName')]",
+			"apiVersion": "2015-11-01-preview",
+			"location": "[resourceGroup().location]",
+			"properties": {
+				"sku": {
+					"name": "[parameters('insights-sku')]"
+				},
+				"features": {
+					"searchVersion": 1
+				}
+			}
+		}
+	],
+	"outputs": {
+		"automationAccountName": {
+			"type": "string",
+			"value": "[variables('automationAccountName')]"
+		},
+		"configurationName": {
+			"type": "string",
+			"value": "[variables('configurationName')]"
+		},
+		"registrationKey": {
+			"type": "string",
+			"value": "[listKeys(resourceId('Microsoft.Automation/automationAccounts/', variables('automationAccountName')), '2018-01-15').Keys[0].value]"
+		},
+		"registrationUrl": {
+			"type": "string",
+			"value": "[reference(concat('Microsoft.Automation/automationAccounts/', variables('automationAccountName'))).registrationUrl]"
+		},
+		"nodeConfigurationName": {
+			"type": "string",
+			"value": "[variables('nodeConfigurationName')]"
+		},
+		"linuxNodeConfigurationName": {
+			"type": "string",
+			"value": "[variables('linuxNodeConfigurationName')]"
+		}
+	}
+}

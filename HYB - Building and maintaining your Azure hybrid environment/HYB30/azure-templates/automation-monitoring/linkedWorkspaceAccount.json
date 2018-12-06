@@ -1,0 +1,35 @@
+{
+    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+      "accountName": {
+        "type": "string",
+        "metadata": {
+          "description": "The name of the Log Analytics workspace."
+        }
+      },
+      "accountResourceGroupName": {
+        "type": "string",
+        "metadata": {
+          "description": "The name of the Log Analytics workspace."
+        }
+      },
+      "workspaceName": {
+        "type": "string",
+        "metadata": {
+          "description": "The name of the Log Analytics workspace."
+        }
+      }
+    },
+    "resources": [
+    {
+      "name": "[concat(parameters('workspaceName'), '/' , 'Automation')]",
+      "type": "Microsoft.OperationalInsights/workspaces/linkedServices",
+      "apiVersion": "2015-11-01-preview",
+      "location": "[resourceGroup().location]",
+      "properties": {
+          "resourceId": "[resourceId(parameters('accountResourceGroupName'), 'Microsoft.Automation/automationAccounts/', parameters('accountName'))]"
+      }
+    }
+    ]
+}

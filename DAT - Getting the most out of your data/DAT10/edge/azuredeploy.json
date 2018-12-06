@@ -1,0 +1,163 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "ResourceNameSuffix": {
+          "type": "string",
+          "metadata": {
+            "description": "The suffix string to add to the pressuplied name for the Azure Resources."
+          }
+        }
+      },
+    "variables": {
+        "IoT_Hub_name": "[concat('IoTEdgeDevOps-iothub-', parameters('ResourceNameSuffix'))]",
+        "Azure_Container_Registry_name": "[concat('IoTEdgeDevOps', parameters('ResourceNameSuffix'))]",
+        "App_Insights_name": "[concat('IoTEdgeDevOps-appinsights-', parameters('ResourceNameSuffix'))]",
+        "IoT_Device_Provisioning_Services_name": "[concat('IoTEdgeDevOps-provisioning-', parameters('ResourceNameSuffix'))]"
+    },
+    "resources": [
+        {
+            "type": "Microsoft.ContainerRegistry/registries",
+            "sku": {
+                "name": "Standard",
+                "tier": "Standard"
+            },
+            "name": "[variables('Azure_Container_Registry_name')]",
+            "apiVersion": "2017-10-01",
+            "location": "eastus",
+            "tags": {},
+            "scale": null,
+            "properties": {
+                "adminUserEnabled": true
+            },
+            "dependsOn": []
+        },
+        {
+            "type": "Microsoft.Devices/IotHubs",
+            "sku": {
+                "name": "S1",
+                "tier": "Standard",
+                "capacity": 1
+            },
+            "name": "[variables('IoT_Hub_name')]",
+            "apiVersion": "2018-04-01",
+            "location": "eastus",
+            "tags": {},
+            "scale": null,
+            "properties": {
+                "operationsMonitoringProperties": {
+                    "events": {
+                        "None": "None",
+                        "Connections": "None",
+                        "DeviceTelemetry": "None",
+                        "C2DCommands": "None",
+                        "DeviceIdentityOperations": "None",
+                        "FileUploadOperations": "None",
+                        "Routes": "None"
+                    }
+                },
+                "ipFilterRules": [],
+                "eventHubEndpoints": {
+                    "events": {
+                        "retentionTimeInDays": 1,
+                        "partitionCount": 2,
+                        "partitionIds": [
+                            "0",
+                            "1"
+                        ],
+                        "path": "[concat(variables('IoT_Hub_name'),'iotedge-devops-iot-hub', variables('IoT_Hub_name'))]",
+                        "endpoint": "sb://iothub-ns-iotedge-de-714666-25797ba1ac.servicebus.windows.net/"
+                    },
+                    "operationsMonitoringEvents": {
+                        "retentionTimeInDays": 1,
+                        "partitionCount": 2,
+                        "partitionIds": [
+                            "0",
+                            "1"
+                        ],
+                        "path": "[concat(variables('IoT_Hub_name'),'iotedge-devops-iot-hub-operationmonitoring')]",
+                        "endpoint": "sb://iothub-ns-iotedge-de-714666-25797ba1ac.servicebus.windows.net/"
+                    }
+                },
+                "routing": {
+                    "endpoints": {
+                        "serviceBusQueues": [],
+                        "serviceBusTopics": [],
+                        "eventHubs": [],
+                        "storageContainers": []
+                    },
+                    "routes": [],
+                    "fallbackRoute": {
+                        "name": "$fallback",
+                        "source": "DeviceMessages",
+                        "condition": "true",
+                        "endpointNames": [
+                            "events"
+                        ],
+                        "isEnabled": true
+                    }
+                },
+                "storageEndpoints": {
+                    "$default": {
+                        "sasTtlAsIso8601": "PT1H",
+                        "connectionString": "",
+                        "containerName": ""
+                    }
+                },
+                "messagingEndpoints": {
+                    "fileNotifications": {
+                        "lockDurationAsIso8601": "PT1M",
+                        "ttlAsIso8601": "PT1H",
+                        "maxDeliveryCount": 10
+                    }
+                },
+                "enableFileUploadNotifications": false,
+                "cloudToDevice": {
+                    "maxDeliveryCount": 10,
+                    "defaultTtlAsIso8601": "PT1H",
+                    "feedback": {
+                        "lockDurationAsIso8601": "PT1M",
+                        "ttlAsIso8601": "PT1H",
+                        "maxDeliveryCount": 10
+                    }
+                },
+                "features": "None"
+            },
+            "dependsOn": []
+        },
+        {
+            "type": "Microsoft.Devices/provisioningServices",
+            "sku": {
+                "name": "S1",
+                "tier": "Standard",
+                "capacity": 1
+            },
+            "name": "[variables('IoT_Device_Provisioning_Services_name')]",
+            "apiVersion": "2017-11-15",
+            "location": "eastus",
+            "tags": {},
+            "scale": null,
+            "properties": {
+                "iotHubs": []
+            },
+            "dependsOn": []
+        },
+        {
+            "type": "microsoft.insights/components",
+            "kind": "other",
+            "name": "[variables('App_Insights_name')]",
+            "apiVersion": "2015-05-01",
+            "location": "eastus",
+            "tags": {},
+            "scale": null,
+            "properties": {
+                "Application_Type": "other",
+                "Flow_Type": "Redfield",
+                "Request_Source": "IbizaAIExtension",
+                "HockeyAppId": null,
+                "SamplingPercentage": null
+            },
+            "dependsOn": []
+        }
+    ]
+}

@@ -1,0 +1,50 @@
+resources:
+- repo: self
+
+variables:
+  CITY: 'berlin'
+  LEARNING_PATH: 'SRE'
+  SESSION_NUMBER: '10'
+
+queue:
+  name: Hosted
+  demands: azureps
+
+steps:
+- task: AzurePowerShell@2
+  displayName: 'Azure PowerShell script: InlineScript'
+  inputs:
+    azureSubscription: 'IgniteTheTour'
+
+    ScriptType: InlineScript
+
+    Inline: |
+     $lp =$env:BUILD_REPOSITORY_LOCALPATH
+     $params= @{
+      ResourceGroupName = "${env:LEARNING_PATH}${env:SESSION_NUMBER}-app-${env:CITY}-dev"
+      TemplateFile = (join-path $lp  template.json)
+      TemplateParameterFile = (join-path $lp parameters.json)
+     }
+
+     $r = Test-AzureRmResourceGroupDeployment @params
+
+     if ($r) {
+     $r.details
+     throw "Failed Validation"
+     }
+     "Success"
+
+    azurePowerShellVersion: LatestVersion
+
+- task: CopyFiles@2
+  displayName: 'Copy Files to: $(build.artifactstagingdirectory)'
+  inputs:
+    Contents: '**/*.json'
+
+    TargetFolder: '$(build.artifactstagingdirectory)'
+
+
+- task: PublishBuildArtifacts@1
+  displayName: 'Publish Artifact: drop'
+  inputs:
+    PathtoPublish: '$(build.artifactstagingdirectory)'

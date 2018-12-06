@@ -1,0 +1,55 @@
+RANDOM_STR='lp2s4'
+if [ -z "$RANDOM_STR" ]; then RANDOM_STR=$(openssl rand -hex 3); else echo $RANDOM_STR; fi
+APP_SERVICE='app-service-linux'
+
+
+az appservice plan create -g $RES_GROUP -n $APP_SERVICE --is-linux --sku P1V2
+
+
+CONTAINER_REGISTRY_PASSWORD=$(az acr credential show -n $ACR_NAME | jq -r .passwords[0].value)
+
+
+WEB_APP_1='frontend-'${RANDOM_STR}
+az webapp create -g $RES_GROUP -n $WEB_APP_1 --plan $APP_SERVICE --deployment-container-image-name 'nginx'
+az webapp config container set -g $RES_GROUP -n $WEB_APP_1 \
+    --docker-custom-image-name "${ACR_NAME}.azurecr.io/ignite-frontend:latest" \
+    --docker-registry-server-url "https://${ACR_NAME}.azurecr.io" \
+    --docker-registry-server-user $ACR_NAME \
+    --docker-registry-server-password $CONTAINER_REGISTRY_PASSWORD
+
+WEB_APP_2='inventory-service-'${RANDOM_STR}
+az webapp create -g $RES_GROUP -n $WEB_APP_2 --plan $APP_SERVICE --deployment-container-image-name 'nginx'
+az webapp config container set -g $RES_GROUP -n $WEB_APP_2 \
+    --docker-custom-image-name "${ACR_NAME}.azurecr.io/ignite-inventory-service:latest" \
+    --docker-registry-server-url "https://${ACR_NAME}.azurecr.io" \
+    --docker-registry-server-user $ACR_NAME \
+    --docker-registry-server-password $CONTAINER_REGISTRY_PASSWORD
+# appsettings
+az webapp config appsettings set -g $RES_GROUP -n $WEB_APP_2 --settings \
+    'PORT'='80'
+# connection-string
+az webapp config connection-string set -g $RES_GROUP -n $WEB_APP_2 --connection-string-type Custom --settings \
+    'InventoryContext'='Server=tcp:sqlserver.eastus.cloudapp.azure.com,1433;Initial Catalog=tailwind;Persist Security Info=False;User ID=username;Password=password!;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=True;Connection Timeout=30;'
+
+WEB_APP_3='product-service-'${RANDOM_STR}
+az webapp create -g $RES_GROUP -n $WEB_APP_3 --plan $APP_SERVICE --deployment-container-image-name 'nginx'
+az webapp config container set -g $RES_GROUP -n $WEB_APP_3 \
+    --docker-custom-image-name "${ACR_NAME}.azurecr.io/ignite-product-service:latest" \
+    --docker-registry-server-url "https://${ACR_NAME}.azurecr.io" \
+    --docker-registry-server-user $ACR_NAME \
+    --docker-registry-server-password $CONTAINER_REGISTRY_PASSWORD
+# appsettings
+az webapp config appsettings set -g $RES_GROUP -n $WEB_APP_3 --settings \
+    PORT='80' \
+    COLLECTION_NAME='inventory' \
+    DB_CONNECTION_STRING='mongodb://cosmosdb:passwordRw==@cosmosdb.documents.azure.com:10255/tailwind?ssl=true&replicaSet=globaldb' 
+
+# diagnostic
+az webapp log config -g $RES_GROUP -n $WEB_APP_1 --application-logging true --docker-container-logging filesystem --web-server-logging filesystem
+az webapp log config -g $RES_GROUP -n $WEB_APP_2 --application-logging true --docker-container-logging filesystem --web-server-logging filesystem
+az webapp log config -g $RES_GROUP -n $WEB_APP_3 --application-logging true --docker-container-logging filesystem --web-server-logging filesystem
+
+az webapp log tail -g $RES_GROUP -n $WEB_APP_1
+
+# open website
+open "https://${WEB_APP_1}.azurewebsites.net/"

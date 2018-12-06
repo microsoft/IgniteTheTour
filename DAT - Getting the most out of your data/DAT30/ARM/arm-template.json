@@ -1,0 +1,438 @@
+{
+    "$schema": "http://schema.management.azure.com/schemas/2014-04-01-preview/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "luis_name": {
+            "type": "String"
+        },
+        "luis_location": {
+            "type": "String"
+        },
+        "luis_apiType": {
+            "type": "String"
+        },
+        "luis_sku": {
+            "type": "String"
+        },
+        "text_analytics_name": {
+            "type": "String"
+        },
+        "text_analytics_location": {
+            "type": "String"
+        },
+        "text_analytics_apiType": {
+            "type": "String"
+        },
+        "text_analytics_sku": {
+            "type": "String"
+        },
+        "translator_name": {
+            "type": "String"
+        },
+        "translator_location": {
+            "type": "String"
+        },
+        "translator_apiType": {
+            "type": "String"
+        },
+        "translator_sku": {
+            "type": "String"
+        },
+        "computer_vision_name": {
+            "type": "string"
+        },
+        "computer_vision_location": {
+            "type": "string"
+        },
+        "computer_vision_apiType": {
+            "type": "string"
+        },
+        "computer_vision_sku": {
+            "type": "string"
+        },
+        "customvision_name": {
+            "type": "string"
+        },
+        "customvision_location": {
+            "type": "string"
+        },
+        "customvision_sku": {
+            "type": "string"
+        },
+        "customvision_predictionsku": {
+            "type": "string"
+        },
+        "face_name": {
+            "type": "string"
+        },
+        "face_location": {
+            "type": "string"
+        },
+        "face_apiType": {
+            "type": "string"
+        },
+        "face_sku": {
+            "type": "string"
+        },
+        "db_administratorLogin": {
+            "type": "String"
+        },
+        "db_administratorLoginPassword": {
+            "type": "SecureString"
+        },
+        "db_collation": {
+            "type": "String"
+        },
+        "db_databaseName": {
+            "type": "String"
+        },
+        "db_tier": {
+            "type": "String"
+        },
+        "db_skuName": {
+            "type": "String"
+        },
+        "db_location": {
+            "type": "String"
+        },
+        "db_maxSizeBytes": {
+            "type": "Int"
+        },
+        "db_serverName": {
+            "type": "String"
+        },
+        "db_sampleName": {
+            "defaultValue": "",
+            "type": "String"
+        },
+        "db_zoneRedundant": {
+            "defaultValue": false,
+            "type": "Bool"
+        },
+        "db_licenseType": {
+            "defaultValue": "",
+            "type": "String"
+        },
+        "db_enableATP": {
+            "defaultValue": false,
+            "type": "Bool"
+        },
+        "db_allowAzureIps": {
+            "defaultValue": true,
+            "type": "Bool"
+        },
+        "function_name": {
+            "type": "string"
+        },
+        "function_storageName": {
+            "type": "string"
+        },
+        "function_location": {
+            "type": "string"
+        },
+        "function_subscriptionId": {
+            "type": "string"
+        },
+        "webapp_name": {
+            "type": "string"
+        },
+        "webapp_hostingPlanName": {
+            "type": "string"
+        },
+        "webapp_hostingEnvironment": {
+            "type": "string"
+        },
+        "webapp_location": {
+            "type": "string"
+        },
+        "webapp_sku": {
+            "type": "string"
+        },
+        "webapp_skuCode": {
+            "type": "string"
+        },
+        "webapp_workerSize": {
+            "type": "string"
+        },
+        "webapp_serverFarmResourceGroup": {
+            "type": "string"
+        },
+        "webapp_subscriptionId": {
+            "type": "string"
+        }
+    },
+    "variables": {
+        "connectionString": "[concat('Server=tcp:', parameters('db_serverName'), '.database.windows.net,1433;Initial Catalog=', parameters('db_databaseName'), ';Persist Security Info=False;User ID=', parameters('db_administratorLogin'), ';Password=', parameters('db_administratorLoginPassword'), ';MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;')]",
+        "customvision_predictionname": "[concat(take(replace(parameters('customvision_name'),'-',''), 18), '_Prediction')]"
+    },
+    "resources": [
+        {
+            "type": "Microsoft.CognitiveServices/accounts",
+            "sku": {
+                "name": "[parameters('luis_sku')]"
+            },
+            "kind": "[parameters('luis_apiType')]",
+            "name": "[parameters('luis_name')]",
+            "apiVersion": "2017-04-18",
+            "location": "[parameters('luis_location')]",
+            "properties": {}
+        },
+        {
+            "type": "Microsoft.CognitiveServices/accounts",
+            "sku": {
+                "name": "[parameters('text_analytics_sku')]"
+            },
+            "kind": "[parameters('text_analytics_apiType')]",
+            "name": "[parameters('text_analytics_name')]",
+            "apiVersion": "2017-04-18",
+            "location": "[parameters('text_analytics_location')]",
+            "properties": {}
+        },
+        {
+            "type": "Microsoft.CognitiveServices/accounts",
+            "sku": {
+                "name": "[parameters('translator_sku')]"
+            },
+            "kind": "[parameters('translator_apiType')]",
+            "name": "[parameters('translator_name')]",
+            "apiVersion": "2017-04-18",
+            "location": "[parameters('translator_location')]",
+            "properties": {}
+        },
+        {
+            "type": "Microsoft.CognitiveServices/accounts",
+            "sku": {
+                "name": "[parameters('computer_vision_sku')]"
+            },
+            "kind": "[parameters('computer_vision_apiType')]",
+            "name": "[parameters('computer_vision_name')]",
+            "apiVersion": "2017-04-18",
+            "location": "[parameters('computer_vision_location')]",
+            "properties": {}
+        },
+        {
+            "apiVersion": "2016-02-01-preview",
+            "name": "[variables('customvision_predictionname')]",
+            "location": "[parameters('customvision_location')]",
+            "sku": {
+                "name": "[parameters('customvision_predictionsku')]"
+            },
+            "type": "Microsoft.CognitiveServices/accounts",
+            "kind": "CustomVision.Prediction",
+            "properties": {}
+        },
+        {
+            "apiVersion": "2017-04-18",
+            "name": "[parameters('face_name')]",
+            "location": "[parameters('face_location')]",
+            "type": "Microsoft.CognitiveServices/accounts",
+            "kind": "[parameters('face_apiType')]",
+            "sku": {
+                "name": "[parameters('face_sku')]"
+            },
+            "properties": {}
+        },
+        {
+            "apiVersion": "2016-02-01-preview",
+            "name": "[parameters('customvision_name')]",
+            "location": "[parameters('customvision_location')]",
+            "sku": {
+                "name": "[parameters('customvision_sku')]"
+            },
+            "type": "Microsoft.CognitiveServices/accounts",
+            "kind": "CustomVision.Training",
+            "properties": {}
+        },
+        {
+            "type": "Microsoft.Sql/servers",
+            "name": "[parameters('db_serverName')]",
+            "apiVersion": "2015-05-01-preview",
+            "location": "[parameters('db_location')]",
+            "properties": {
+                "administratorLogin": "[parameters('db_administratorLogin')]",
+                "administratorLoginPassword": "[parameters('db_administratorLoginPassword')]",
+                "version": "12.0"
+            },
+            "resources": [
+                {
+                    "type": "databases",
+                    "sku": {
+                        "name": "[parameters('db_skuName')]",
+                        "tier": "[parameters('db_tier')]"
+                    },
+                    "name": "[parameters('db_databaseName')]",
+                    "apiVersion": "2017-10-01-preview",
+                    "location": "[parameters('db_location')]",
+                    "properties": {
+                        "collation": "[parameters('db_collation')]",
+                        "maxSizeBytes": "[parameters('db_maxSizeBytes')]",
+                        "sampleName": "[parameters('db_sampleName')]",
+                        "zoneRedundant": "[parameters('db_zoneRedundant')]",
+                        "licenseType": "[parameters('db_licenseType')]"
+                    },
+                    "dependsOn": [
+                        "[concat('Microsoft.Sql/servers/', parameters('db_serverName'))]"
+                    ]
+                },
+                {
+                    "type": "firewallrules",
+                    "name": "AllowAllWindowsAzureIps",
+                    "apiVersion": "2014-04-01-preview",
+                    "location": "[parameters('db_location')]",
+                    "properties": {
+                        "endIpAddress": "0.0.0.0",
+                        "startIpAddress": "0.0.0.0"
+                    },
+                    "dependsOn": [
+                        "[concat('Microsoft.Sql/servers/', parameters('db_serverName'))]"
+                    ],
+                    "condition": "[parameters('db_allowAzureIps')]"
+                },
+                {
+                    "type": "securityAlertPolicies",
+                    "name": "Default",
+                    "apiVersion": "2017-03-01-preview",
+                    "properties": {
+                        "state": "Enabled",
+                        "disabledAlerts": [],
+                        "emailAddresses": [],
+                        "emailAccountAdmins": true
+                    },
+                    "dependsOn": [
+                        "[concat('Microsoft.Sql/servers/', parameters('db_serverName'))]",
+                        "[concat('Microsoft.Sql/servers/', parameters('db_serverName'), '/databases/', parameters('db_databaseName'))]"
+                    ],
+                    "condition": "[parameters('db_enableATP')]"
+                }
+            ]
+        },
+        {
+            "apiVersion": "2016-03-01",
+            "name": "[parameters('function_name')]",
+            "type": "Microsoft.Web/sites",
+            "properties": {
+                "name": "[parameters('function_name')]",
+                "siteConfig": {
+                    "appSettings": [
+                        {
+                            "name": "FUNCTIONS_WORKER_RUNTIME",
+                            "value": "dotnet"
+                        },
+                        {
+                            "name": "AzureWebJobsStorage",
+                            "value": "[concat('DefaultEndpointsProtocol=https;AccountName=',parameters('function_storageName'),';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('function_storageName')), '2015-05-01-preview').key1)]"
+                        },
+                        {
+                            "name": "FUNCTIONS_EXTENSION_VERSION",
+                            "value": "~2"
+                        },
+                        {
+                            "name": "WEBSITE_CONTENTAZUREFILECONNECTIONSTRING",
+                            "value": "[concat('DefaultEndpointsProtocol=https;AccountName=',parameters('function_storageName'),';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('function_storageName')), '2015-05-01-preview').key1)]"
+                        },
+                        {
+                            "name": "WEBSITE_CONTENTSHARE",
+                            "value": "[concat(toLower(parameters('function_name')), '988c')]"
+                        },
+                        {
+                            "name": "WEBSITE_NODE_DEFAULT_VERSION",
+                            "value": "8.11.1"
+                        },
+                        {
+                            "name": "analyticsSubscriptionKey",
+                            "value": "[listKeys(resourceId('Microsoft.CognitiveServices/accounts/', parameters('text_analytics_name')), '2016-02-01-preview').key1]"
+                        },
+                        {
+                            "name": "translatorSubscriptionKey",
+                            "value": "[listKeys(resourceId('Microsoft.CognitiveServices/accounts/', parameters('translator_name')), '2016-02-01-preview').key1]"
+                        },
+                        {
+                            "name": "visionSubscriptionKey",
+                            "value": "[listKeys(resourceId('Microsoft.CognitiveServices/accounts/', parameters('computer_vision_name')), '2016-02-01-preview').key1]"
+                        },
+                        {
+                            "name": "customVisionSubscriptionKey",
+                            "value": "[listKeys(resourceId('Microsoft.CognitiveServices/accounts', variables('customvision_predictionname')), providers('Microsoft.CognitiveServices', 'accounts').apiVersions[0]).key1]"
+                        },
+                        {
+                            "name": "region",
+                            "value": "westus"
+                        }
+                    ],
+                    "connectionStrings": [
+                        {
+                            "name": "Tailwind",
+                            "connectionString": "[variables('connectionString')]"
+                        }
+                    ]
+                },
+                "clientAffinityEnabled": false,
+                "reserved": false
+            },
+            "dependsOn": [
+                "[concat('Microsoft.Storage/storageAccounts/', parameters('function_storageName'))]",
+                "[concat('Microsoft.CognitiveServices/accounts/', parameters('text_analytics_name'))]",
+                "[concat('Microsoft.CognitiveServices/accounts/', parameters('translator_name'))]",
+                "[concat('Microsoft.CognitiveServices/accounts/', variables('customvision_predictionname'))]",
+                "[concat('Microsoft.Sql/servers/', parameters('db_serverName'))]"
+            ],
+            "location": "West US",
+            "kind": "functionapp"
+        },
+        {
+            "apiVersion": "2015-05-01-preview",
+            "type": "Microsoft.Storage/storageAccounts",
+            "name": "[parameters('function_storageName')]",
+            "location": "[parameters('function_location')]",
+            "properties": {
+                "accountType": "Standard_LRS"
+            }
+        },
+        {
+            "apiVersion": "2016-03-01",
+            "name": "[parameters('webapp_name')]",
+            "type": "Microsoft.Web/sites",
+            "properties": {
+                "name": "[parameters('webapp_name')]",
+                "siteConfig": {
+                    "appSettings": [
+                        {
+                            "name": "FunctionsUrl",
+                            "value": "[concat('https://', parameters('function_name'), '.azurewebsites.net')]"
+                        }
+                    ],
+                    "connectionStrings": [
+                        {
+                            "name": "Tailwind",
+                            "connectionString": "[variables('connectionString')]"
+                        }
+                    ]
+                },
+                "serverFarmId": "[concat('/subscriptions/', parameters('webapp_subscriptionId'),'/resourcegroups/', parameters('webapp_serverFarmResourceGroup'), '/providers/Microsoft.Web/serverfarms/', parameters('webapp_hostingPlanName'))]",
+                "hostingEnvironment": "[parameters('webapp_hostingEnvironment')]"
+            },
+            "location": "[parameters('webapp_location')]",
+            "dependsOn": [
+                "[concat('Microsoft.Web/serverfarms/', parameters('webapp_hostingPlanName'))]",
+                "[concat('Microsoft.Web/sites/', parameters('function_name'))]",
+                "[concat('Microsoft.Sql/servers/', parameters('db_serverName'), '/databases/', parameters('db_databaseName'))]"
+            ]
+        },
+        {
+            "apiVersion": "2016-09-01",
+            "name": "[parameters('webapp_hostingPlanName')]",
+            "type": "Microsoft.Web/serverfarms",
+            "location": "[parameters('webapp_location')]",
+            "properties": {
+                "name": "[parameters('webapp_hostingPlanName')]",
+                "workerSizeId": "[parameters('webapp_workerSize')]",
+                "numberOfWorkers": "1",
+                "hostingEnvironment": "[parameters('webapp_hostingEnvironment')]"
+            },
+            "sku": {
+                "Tier": "[parameters('webapp_sku')]",
+                "Name": "[parameters('webapp_skuCode')]"
+            }
+        }
+    ]
+}

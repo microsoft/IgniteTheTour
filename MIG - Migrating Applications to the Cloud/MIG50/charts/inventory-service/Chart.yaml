@@ -1,0 +1,14 @@
+name: inventory
+version: 0.0.1
+appVersion: 0.0.1
+description: The Tailwind Traders Inventory Service
+# TODO: this should be updated to the TwT logo
+icon: https://bitnami.com/assets/stacks/wordpress/img/wordpress-stack-220x234.png
+keywords:
+- Tailwind Traders
+- Web Services
+- E-Commerce
+home: https://github.com/Azure-Samples/ignite-tour-lp2s5
+sources:
+maintainers:
+engine: gotpl

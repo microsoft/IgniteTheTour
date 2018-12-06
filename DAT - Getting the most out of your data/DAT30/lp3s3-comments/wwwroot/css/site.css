@@ -1,0 +1,115 @@
+/* Please see documentation at https://docs.microsoft.com/aspnet/core/client-side/bundling-and-minification 
+for details on configuring this project to bundle and minify static web assets. */
+body {
+    padding-top: 50px;
+    padding-bottom: 20px;
+}
+
+/* Wrapping element */
+/* Set some basic padding to keep content from hitting the edges */
+.body-content {
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
+.header {
+    font-weight: bold;
+    text-decoration: underline;
+}
+table {
+    border: 2px solid #000000;
+    width: 100%;
+    text-align: left;
+    border-collapse: collapse;
+  }
+  table td, table th {
+    border: 1px solid #444444;
+    padding: 5px 4px;
+  }
+  table tr:nth-child(even) {
+    background: #D0E4F5;
+  }
+  table thead {
+    background: #CFCFCF;
+    border-bottom: 2px solid #000000;
+  }
+  table thead th {
+    font-weight: bold;
+    color: #000000;
+    text-align: left;
+  }
+  table tfoot td {
+    font-size: 14px;
+  }
+
+  button {
+    background-color: #42b0e3;
+    background-image: linear-gradient(to bottom, #42b0e3, #2ba9e3);
+    border: 1px solid #107db0;
+    box-shadow: inset 0 1px 0 #7cd4fc, inset 0 -1px 0 #2696c9, inset 0 0 0 1px #59b7e3, 0 2px 4px rgba(0, 0, 0, 0.2);
+    color: white;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+    border-radius: 3px;
+    cursor: pointer;
+    display: inline-block;
+    font-size: 1.1em;
+    line-height: 20px;
+    padding: 5px 8px;
+    margin: 5px;
+    transition: all 20ms ease-out;
+    vertical-align: top;
+    min-width: 7em;
+  }
+
+  button:hover, button:focus {
+    background: #2ba9e3;
+    border-color: #004c6f;
+    box-shadow: inset 0 1px 0 #7cd4fc, inset 0 -1px 0 #2696c9, inset 0 0 0 1px #59b7e3;
+  }
+  button:active {
+    background: #2ba9e3;
+    box-shadow: inset 0 2px 3px rgba(0, 0, 0, 0.2);
+  }
+  button i.fa {
+    color: white;
+    text-shadow: 0 1px 0 rgba(0, 0, 0, 0.3);
+    break-after: avoid;
+  }
+
+  .sentiment-wrapper {
+    width: 100px;
+    background: #ffffff;
+    padding: 0px;
+    border-radius: 5px;
+    margin: 2px auto;
+    border: 1px solid rgba(0,0,0,0.75); 
+    box-shadow: 
+      inset 0 1px 0 rgba(255,255,255,0.25),
+      inset 0 0 5px rgba(0,0,0,0.3),
+      0 2px 2px rgba(256,256,256,0.45),
+      inset 0 10px 20px rgba(0,0,0,0.15);
+    position: relative;
+  }
+
+  .sentiment-wrapper .progress {
+    height: 15px;
+    border-radius: 5px 0px 0px 5px;
+    background-color: rgb(51, 137, 177);
+    position: relative;
+    box-shadow: 
+      inset 0 10px 0 rgba(255,255,255,0.2),
+      inset 0 2px 2px rgba(0,0,0,0.125);
+    margin: 0 0px;
+    border-right: 1px solid rgba(0,0,0,0.75);
+  }
+  
+  .sentiment-wrapper .progress.bad {
+    background-color: rgb(177, 51, 51);
+  }
+  .sentiment-wrapper .progress.good {
+    background-color: rgb(51, 177, 74);
+  }
+
+  .sentiment-percent {
+    text-align:center;
+  }
