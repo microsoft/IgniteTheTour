@@ -49,12 +49,6 @@ Azure Key Vault still requires the application to have a single secret: an AAD i
 
 Because there is now a centralized location for an application's secrets, different application deployments around the world can pull their secrets from a single Key Vault so we don't have to configure each deployment of the app with their own set of secrets.
 
-Presenter notes:
-* Familiarize yourself [Azure Key Vault](https://docs.microsoft.com/en-us/azure/key-vault/?WT.mc_id=msignitethetour-github-dev10) capabilities
-* Libraries such as [ms-rest-azure](https://www.npmjs.com/package/ms-rest-azure) (Node) and [Microsoft.Azure.Services.AppAuthentication](https://www.nuget.org/packages/Microsoft.Azure.Services.AppAuthentication?WT.mc_id=msignitethetour-github-dev10) (.NET) know how to use MSI, and can be used with Key Vault libraries to authenticate easily with MSI. On your local machine or environments with no MSI enabled, these libraries have alternate methods of authenticating the application so your code doesn't have to change.
-* Currently there is no automated way for an app to pull in secrets when they are changed in Key Vault. You must restart each instance of the app manually as secrets are retrieved at app startup.
-* When updating secrets in Key Vault, you need to create a new version of the secret. The behavior for enabling/disabling is weird so leave old versions enabled for simplicity.
-
 #### Azure Cosmos DB
 
 There are many features in Cosmos DB. The two we will focus on in this talk are its different APIs and global distribution.
@@ -62,13 +56,6 @@ There are many features in Cosmos DB. The two we will focus on in this talk are 
 Tailwind Traders' Product Service is built with Node.js. MongoDB is a popular database that all Node developers know how to use. Azure Cosmos DB supports many APIs, one of which is MongoDB. Tailwind Traders is able to use Cosmos DB by changing their Product Service's MongoDB connection string to point to Cosmos DB. This allows them to take advantage of a fully managed database, without worrying about servers, updates, sharding, backups, etc.
 
 Cosmos DB makes it easy to replicate our data around the world. This allows applications deployed around the world to read from the nearest replica and achieve very low latency. With Cosmos DB multi-master write capability, we can also write to the nearest replicas. Replicating data in multiple Azure regions also provides resilience in the unlikely event of a regional failure. Cosmos DB can be configured with automatic failover that will select a new primary write region if the originally assigned primary write region is down.
-
-Presenter notes:
-* Cosmos DB can be configured to failover the write region based on each region's priority. If multi-master writes is enabled, there are no failover priorities as the application will simply write to the nearest available replica.
-* In many cases we can simply point a MongoDB application at Cosmos DB and it should work. However, you should have a good understanding of what operations are not supported and which are in preview (or requires a feature flag to be enabled, such as the aggregation pipeline).
-* Common follow up questions when talking about MongoDB API and geo-replication:
-    - [How to read from secondaries when using Cosmos DB?](https://docs.microsoft.com/en-us/azure/cosmos-db/mongodb-readpreference?WT.mc_id=msignitethetour-github-dev10)
-    - [What operations are supported in Cosmos DB](https://docs.microsoft.com/en-us/azure/cosmos-db/mongodb-feature-support?WT.mc_id=msignitethetour-github-dev10)
 
 #### Azure App Service
 
@@ -78,9 +65,6 @@ One easy way to deploy the application to App Service is using VS Code. With the
 
 App Service allows us to run multiple instances of an application and it will load balance traffic across the running instances. This allows our application to be highly available within a region.
 
-Presenter notes:
-* The demo is to deploy Product Service to Azure App Service with VS Code. However, if you are more comfortable with .NET, use the Inventory Service with VS Code or Visual Studio. There are also Dockerfiles included with each project; you can also do the demo with Azure Container Registry and Web Apps for Containers.
-
 #### Azure Storage static websites
 
 The frontend of our application is a React single page application with no server executable code. While we can serve static websites from Azure App Service, it is more efficient to use the new Static Websites feature of Azure Blob Storage.
@@ -89,20 +73,11 @@ We'll use VS Code to deploy the frontend to Static Websites in Blob Storage.
 
 Static Websites can be placed behind a CDN or Azure Front Door to cache data closer to the customer. This also allows users to access a cached version if Blob storage goes down temporarily.
 
-Presenter notes:
-* Static Websites is currently in preview.
-
 #### Azure Front Door
 
 Azure Front Door Service provides a scalable and secure entry point for fast delivery of your global web applications. We will deploy the Product Service and frontend to multiple regions in Azure, and use Front Door as a proxy over the deployments so that each user will be routed from the Front Door instance closest to them to the Product Service or frontend instance that is closest to the Front Door location.
 
 Front Door can be configured with TLS termination, health probes, caching, custom domains, free managed TLS, etc.
-
-Presenter notes:
-* Azure Front Door is currently in preview.
-* Front Door has a lot of capabilities. Make sure to read about all of what it can do [here](https://docs.microsoft.com/en-us/azure/frontdoor/?WT.mc_id=msignitethetour-github-dev10).
-* Be sure to know the difference between Front Door, CDN, and Traffic Manager.
-
 
 ## Additional resources
 
