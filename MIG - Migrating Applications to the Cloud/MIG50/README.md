@@ -1,8 +1,14 @@
-# MIG50: Gain Higher Availability with Azure Kubernetes Service (AKS)
+# MIG50: Consolidating Infrastructure with Azure Kubernetes Service
 
 This session demonstrates taking your containerized application and deploying it to Azure Kubernetes Service (AKS). You’ll walk away with a deep understanding of major Kubernetes concepts, how they translate to your app, and how to put it all to use with industry standard Kubernetes tooling. 
 
 This repo contains the source code for running the session demos. See installation instructions below.
+
+## Services Used
+
+- Azure Kubernetes Service
+- FrontDoor
+- Cosmos DB
 
 ## Getting Started
 
