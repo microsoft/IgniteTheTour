@@ -1,3 +1,12 @@
+# DAT50 - Operationalizing your new Inventory Management Machine Learning Mode
+We've seen how Tailwind Traders developed a Machine Learning model which observes video feeds of product shelves in each of our brick and mortar stores. When a given product is removed from a shelf or replaced with an invalid one, our model will alert the store manager to ensure that the shelves get restocked properly.
+
+In this session, we’ll show you how to deploy that Machine Learning model to Azure, and demonstrate – with a fixed camera pointing at a store shelf – a system that recognizes the type and position of products on the shelf and generates an automated alert when the shelf needs attention
+
+#Services Used
+- Azure Machine Learning service
+- Azure Pipelines
+
 # PyTorch-YOLOv3
 Minimal implementation of YOLOv3 in PyTorch.
 
