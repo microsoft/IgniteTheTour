@@ -1,6 +1,11 @@
 **NOTE:** This repo uses the same code as [DEV10](), so you should clone the source from [that repo](). Read down on this page for a little more info on how to setup the project in DEV10 for this session.
 
 # Migrating Web Applications To Azure
+
+Northwind Traders kept the bulk of its data in an on-premises data center, which hosted servers running both SQL Server and MongoDB. After the acquisition, Tailwind Traders worked with the Northwind team to move their data center entirely to Azure.
+
+In this session we’ll show you how we migrated an on-premises MongoDB database to Azure Cosmos DB and SQL Server database to an Azure SQL Server Managed Instance. You’ll learn about data preparation decisions, performing the migration, and ensuring your application has zero downtime while switching over to the cloud hosted database providers. 
+
 _This project uses the exact same assets as DEV10. It focuses on deploying those assets to Azure with Azure Container Registry and Azure Web Apps for Containers._ 
 
 [Watch A Recording](https://microsoft.sharepoint.com/:v:/t/CloudDevAdvocacy/ERBM2XpSONBFrMZmOgdXH2gBlhRw5RgVe8NEhJ49BM5vxQ?e=e6phxE)  
