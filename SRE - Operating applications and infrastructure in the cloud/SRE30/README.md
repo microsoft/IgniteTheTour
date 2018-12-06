@@ -6,6 +6,11 @@ Tailwind Trader’s modern monitoring and alerting processes are working great. 
  
 In this module, we will explore the processes and tools available to us to troubleshoot issues as they come up with running applications and infrastructure on Azure. Participants will gain exposure to querying log data found in Log Analytics as well as what to look for within Application Insights and Network Monitor to lead engineers to understanding and solving problems quickly.
 
+# Services Used
+
+- Azure Monitoring – Log Analytics, 
+- Azure Monitor – Network Monitor, 
+- Application Insights
 
 ## Setting up a demo environment
 
