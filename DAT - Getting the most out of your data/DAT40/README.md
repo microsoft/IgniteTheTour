@@ -11,6 +11,11 @@ You can find instructions on setting up notebooks [here](https://docs.microsoft.
 
 You can find full documentation for Azure Machine Learning [here](https://aka.ms/aml-docs)
 
+## Services Used
+- PowerBI 
+- D3.js 
+- Azure Blob Storage 
+
 ## Getting Started
 
 These examples will provide you with an effective way to get started using AML.  Once you're familiar with
