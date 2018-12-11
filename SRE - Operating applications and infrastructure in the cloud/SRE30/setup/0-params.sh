@@ -50,4 +50,4 @@ prod_svc_app_name="tw-product-${LEARNING_PATH}${SESSION_NUMBER}-${CITY}-${APP_EN
 inv_app_name="tw-inventory-${LEARNING_PATH}${SESSION_NUMBER}-${CITY}-${APP_ENVIRONMENT}"
 
 ### Source Code
-base_source_path="$HOME/source/SRE30-Setup/demos"
+base_source_path="$HOME/source/IgniteTheTour/SRE - Operating applications and infrastructure in the cloud/SRE30/demos"

@@ -7,19 +7,15 @@ const options = {
   day: 'numeric'
 };
 
-const config = {
-  userName: process.env.SQL_USERNAME,
-  password: process.env.SQL_PASSWORD,
-  server: process.env.SQL_SERVER,
-  options: {
-    encrypt: true,
-    database: process.env.SQL_DATABASE
-  }
-};
-
 module.exports = function(context, myTimer) {
   getChangedSkus()
     .then(data => {
+      // Send email only if SKU's have changed
+      // if (data.length > 0) {
+      //   sendEmail(context, data);
+      // } else {
+      //   context.done();
+      // }
         sendEmail(context, data);
     })
     .catch(err => {
@@ -59,37 +55,31 @@ function sendEmail(context, data) {
  * Executes a query against the database for SKU's changed in the last 24 hours
  * @returns {Promise} Promise object contains result of query
  */
-function getChangedSkus() {
-  return new Promise((resolve, reject) => {
-    const connection = new Connection(config);
-    const query = `SELECT Sku, Quantity, CONVERT(varchar, Modified, 0) as Modified
-                            FROM Inventory
-                            WHERE Modified >= dateadd(day, -1, getdate())`;
+async function getChangedSkus() {
+  const { Client } = require('pg')
+  const client = new Client(process.env.PG_CONNECTION)
 
-    connection.on('connect', err => {
-      if (err) reject(err);
+  await client.connect()
 
-      let request = new Request(query, err => {
-        if (err) {
-          reject(err);
-        }
-      });
+  const query1 = `
+  SELECT "Sku", "Quantity", "Modified"
+  FROM "Inventory"
+  WHERE "Modified" > current_date - interval '1' day
+  ORDER BY "Modified" DESC;
+  `
 
-      const results = [];
-      request.on('row', columns => {
-        let result = {};
-        columns.forEach(column => {
-          result[column.metadata.colName] = column.value;
-        });
+  const result = await client.query(query1)
 
-        results.push(result);
-      });
+  results = []
+  result.rows.forEach(x => {
+      let z = {};
+      result.fields.forEach(y => {
+          z[y.name] = x[y.name]
+      })
+      results.push(z);
+  })
 
-      request.on('doneProc', (rowCount, more) => {
-        resolve(results);
-      });
+  await client.end()
 
-      connection.execSql(request);
-    });
-  });
+  return results
 }

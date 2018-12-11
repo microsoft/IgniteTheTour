@@ -7,3 +7,4 @@ scripts/down/apps.sh
 
 # func app
 az functionapp delete -g $(rgfunc) -n $(funcname)
+make funcsetup

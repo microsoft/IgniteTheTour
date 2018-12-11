@@ -1,0 +1,22 @@
+pool:
+  vmImage: 'Ubuntu 16.04'
+
+
+variables:
+  registryServerName: '$(registryName).azurecr.io'
+  imageName: '$(projectName)'
+  # define 4 more variables: projectName, registryName, registryLogin and registryPassword in the build pipeline in UI
+
+
+steps:
+- bash: docker build -f $(system.defaultWorkingDirectory)/src/$(projectName)/InventoryService.Api/Dockerfile -t $(registryServerName)/$(imageName):$(build.buildId) -t $(registryServerName)/$(imageName):latest $(system.defaultWorkingDirectory)/src/$(projectName)/InventoryService.Api
+  displayName: 'docker build'
+
+- bash: docker login $(registryServerName) -u $(registryLogin) -p $(registryPassword)
+  displayName: 'docker login'
+
+- bash: |
+    docker push $(registryServerName)/$(imageName):$(build.buildId)
+    docker push $(registryServerName)/$(imageName):latest
+  displayName: 'docker push'
+  condition: and(succeeded(), eq(variables['build.sourceBranch'], 'refs/heads/master'))

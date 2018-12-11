@@ -17,7 +17,7 @@ if [ "$(clustername2)" != "$(kubectl config current-context)" ]; then
 fi
 prompt helm upgrade frontend --install --recreate-pods \
 --namespace default \
---set image.registry="$(acrname).azurecr.io",ingress.enabled=True,ingress.hosts[0]=dashboard.kubernetes,applicationroutingzone=$(routingzone) \
+--set image.registry="$(acrname).azurecr.io",ingress.enabled=True,ingress.hosts[0]=dashboard.kubernetes,applicationroutingzone=$(routingzone2) \
 --set producturl=/products \
 --set inventoryurl=/inventory \
 ./

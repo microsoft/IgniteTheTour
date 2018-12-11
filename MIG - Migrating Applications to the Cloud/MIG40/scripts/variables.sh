@@ -12,11 +12,6 @@ PG_USER_BASE=tuser
 PG_USER="tuser@tailwindlp2s4"
 PG_PASS='asdf1234)(*&^)'
 COLLECTION=inventory
-
-SQL_USERNAME="username"
-SQL_DATABASE="tailwind"
-SQL_PASSWORD=`az keyvault secret show --vault-name ignitetour-credentials --name 'SQLPassword' | jq .value | sed 's/"//g'`
-SQL_SERVER=`az keyvault secret show --vault-name ignitetour-credentials --name 'SQLServer' | jq .value | sed 's/"//g'`
 SENDGRID_API_KEY=`az keyvault secret show --vault-name ignitetour-credentials --name 'SendGridAPIKey' | jq .value | sed 's/"//g'`
 SENDGRID_TEMPLATE_ID="d-f6aad27b127643e29f4ce3de5ca7d5f9"
 
@@ -144,6 +139,12 @@ function dotnetconnection()
 {
     local dotnetconnection="Server=$(pghost);Database=$(dbname);Port=5432;UserId=$(pguser);Password=$(pgpass);SslMode=Require;"
     echo "$dotnetconnection"
+}
+
+function funcpgconnection()
+{
+    local conn="postgres://$(pguser):$(pgpass)@$(pghost):5432/$(dbname)"
+    echo "$conn"
 }
 
 # tests below

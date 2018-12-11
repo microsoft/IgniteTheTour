@@ -4,7 +4,7 @@ source ./scripts/variables.sh
 
 APP_SERVICE='app-service-linux'
 
-az appservice plan create \
+prompt az appservice plan create \
     -g $(rg) \
     -n $APP_SERVICE \
     --is-linux --sku P1V2

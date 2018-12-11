@@ -164,7 +164,7 @@ export default {
       let symbolGenerator = d3
         .symbol()
         .type(d3.symbolStar)
-        .size(80)
+        .size(50)
 
       let pathData = symbolGenerator()
 

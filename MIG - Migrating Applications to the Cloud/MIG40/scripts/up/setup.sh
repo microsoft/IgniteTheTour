@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 set -eou pipefail
 source ./scripts/variables.sh
+PG_CONNECTION="$(funcpgconnection)"
 
 # create src/reports/local.settings.json
 if [ -f "src/reports/local.settings.json" ]; then
@@ -11,10 +12,7 @@ cat << EOF > ./src/reports/local.settings.json
     "Values": {
       "AzureWebJobsStorage": "DefaultEndpointsProtocol=https;EndpointSuffix=core.windows.net;AccountName=storagelp2s4;AccountKey=vlEFjLfGLi9PLbyyk+Ojrx1eXnUQFEEIaT41+V9FNFpjpweCZntMAyZ37F4XFDu6syo3BBgxbu5PeJt8M64L1Q==",
       "FUNCTIONS_WORKER_RUNTIME": "node",
-      "SQL_USERNAME": "${SQL_USERNAME}",
-      "SQL_PASSWORD": "${SQL_PASSWORD}",
-      "SQL_SERVER": "${SQL_SERVER}",
-      "SQL_DATABASE": "${SQL_DATABASE}",
+      "PG_CONNECTION": "${PG_CONNECTION}",
       "SENDGRID_API_KEY": "${SENDGRID_API_KEY}",
       "SENDGRID_TEMPLATE_ID": "${SENDGRID_TEMPLATE_ID}"
     }

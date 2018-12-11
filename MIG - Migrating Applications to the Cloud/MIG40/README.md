@@ -1,14 +1,8 @@
-# MIG40: Modernizing your Application with Containers and Serverless
+# MIG40: Optimizing your app's infrastructure for new cloud options
 
 This session demonstrates how to move your application off a VM and into containers in the cloud, where you’ll gain deployment flexibility and repeatable builds.  You’ll then learn how to move your application secrets into Azure KeyVault, where you’ll have fine-grained control over your keys, secrets, and policies. Finally, you’ll see how to move scheduled tasks into the Serverless era with Azure Functions.
 
 This repo contains the source code for running the session demos. See installation instructions below.
-
-## Services Used
-
-- Migrate web application from a VM to Azure Web App for Containers
-- Store app secrets in Azure KeyVault
-- Using Serverless functions for scheduled tasks
 
 ## Getting Started
 

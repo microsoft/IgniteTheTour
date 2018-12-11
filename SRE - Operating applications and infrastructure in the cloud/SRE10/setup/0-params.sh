@@ -12,6 +12,8 @@ LOCATION="westeurope"
 ## Resource Group Names
 APP_RG="${LEARNING_PATH}${SESSION_NUMBER}-app-${CITY}-${APP_ENVIRONMENT}"
 DB_RG="${LEARNING_PATH}${SESSION_NUMBER}-db-${CITY}-${APP_ENVIRONMENT}"
+KEYVAULT_RG="${LEARNING_PATH}${SESSION_NUMBER}-vault-${CITY}"
+INSIGHTS_RG="${LEARNING_PATH}${SESSION_NUMBER}-insights-${CITY}-${APP_ENVIRONMENT}"
 
 ## SQL and Cosmos Database settings
 SERVERNAME="tw-sql${SESSION_NUMBER}-${APP_ENVIRONMENT}"
@@ -50,4 +52,4 @@ prod_svc_app_name="tw-product-${LEARNING_PATH}${SESSION_NUMBER}-${CITY}-${APP_EN
 inv_app_name="tw-inventory-${LEARNING_PATH}${SESSION_NUMBER}-${CITY}-${APP_ENVIRONMENT}"
 
 ### Source Code
-base_source_path="$HOME/source/SRE10-Setup/demos"
+base_source_path="$HOME/source/SRE - Operating applications and infrastructure in the cloud/SRE10/demos"

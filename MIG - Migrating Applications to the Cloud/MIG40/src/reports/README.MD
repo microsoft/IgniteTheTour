@@ -29,11 +29,8 @@ Add the following variables to your `local.settings.json` file...
 ```
 "AzureWebJobsStorage": "{Storage Account Connection String}",
 "FUNCTIONS_WORKER_RUNTIME": "node",
-"SQL_USERNAME": "{SQL Server User Name}",
-"SQL_PASSWORD": "{SQL Server Password}",
-"SQL_SERVER": "{Fully Qualified Server Name}",
-"SQL_DATABASE": "{Name Of Database With Inventory Table}",
 "SENDGRID_API_KEY": "{API Key From SendGrid}",
+"PG_CONNECTION": "{API Key From SendGrid}",
 "SENDGRID_TEMPLATE_ID": "{SendGrid Template ID}"
 ```
 
