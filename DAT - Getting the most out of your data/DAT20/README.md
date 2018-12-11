@@ -1,32 +1,28 @@
-DAT20 -  Dealing With Massive Data Ingestion 
-Tailwind Traders deals with gigantic amounts of data, continually pouring in from:
+# Understanding Data Through Visualization
+  This repo serves as an example for Microsoft Ignite the Tour. In this session, we explore how to create basic charts and graphs using d3.
 
-	1. IoT delivery devices in our fulfillment centers 
-	2. Point-of-sale orders from thousands of brick and mortar stores
-	3. Online ecommerce orders from our web and mobile applications
-	4. Telemetry data and application/system logs
+  ### In this repo:
+  This is a Vue application that shows: how to construct a base chart component, with several methods that update the chart. It shows how to tear down the chart between different visualizations, as well as 5 ways the data can be displayed.
+  
+  [Sign up for Azure here](https://azure.microsoft.com/en-us/free/?WT.mc_id=MSIgniteTheTour-github-DAT20)
+  
+## Project Setup
+  ### Prerequisites:
+  - [Vue CLI](https://cli.vuejs.org/), run `vue create nameofproject`
+  - Install [d3](https://d3js.org/), run `npm i d3` or `yarn add d3`
+  
+  ### Instructions
+  - Set up project: `yarn install` or `npm install`
 
-All this data needs to be processed, churned, analyzed, and stored. In this talk we'll show you how Tailwind Traders has been able to answer analytical questions succinctly, such as "what products are generating the most sales?" and "which stores are generating the most revenue?" The effective analysis of information can make or break a company, and our partnership with Microsoft Azure has been instrumental in helping us look to the future, instead of react to the past.
+## Learn More/Resources
+- [Node on Azure](https://docs.microsoft.com/en-us/azure/app-service/app-service-web-get-started-nodejs?WT.mc_id=MSIgniteTheTour-github-DAT20)
+- [D3js.org](https://d3js.org/?WT.mc_id=MSIgniteTheTour-github-DAT20)
+- [Vue](https://vuejs.org/?WT.mc_id=MSIgniteTheTour-github-DAT20)
 
-Services Used:
-- IoT Hub
-- Event Hubs
-- Azure Databricks + Spark
-- Azure Blob Storage
-- Cosmos DB
-- Azure Functions
-
-## Project setup
-```
-yarn install
-```
-
-### Compiles and hot-reloads for development
-```
-yarn run serve
-```
-
-### Compiles and minifies for production
-```
-yarn run build
-```
+## Running Locally and building
+  ### Prerequisites:
+  - [Yarn](https://yarnpkg.com/en/)
+  
+  ### Instructions
+  1. Compiles and hot-reloads for development: `yarn run serve`
+  2. Compiles and minifies for production: `yarn run build`

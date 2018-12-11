@@ -41,7 +41,7 @@ az appservice plan create \
     --name $app_svc_plan \
     --resource-group $APP_RG \
     --is-linux \
-    --sku B1 \
+    --sku P1V2 \
     -o table &>> $base_source_path/../setup/log/4-setup-apps.log
 
 echo "Creating the .NET Core website for the Inventory app."
