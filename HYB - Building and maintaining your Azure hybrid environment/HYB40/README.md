@@ -4,7 +4,6 @@ In this session you’ll learn how Tailwind Traders maps their organizational st
 
 ## Services Used
 
-- Azure Security Center
 - Azure Policy
 - Role Based Access Control
 - Azure Blueprints
@@ -16,6 +15,8 @@ All services created will incur usage costs that you, the replicator of the demo
 ## Demo Prerequisites
 
 ### Create Azure Policy artifacts and configure 
+
+*Note:This demo shows two different subscriptions added to one management group. If you are unable to create an additional subscription, you can run through these demo steps with only one single subscription in the management group.*
 
 - Create one subscription named TT-Prod-Paragon
     
@@ -128,7 +129,7 @@ All services created will incur usage costs that you, the replicator of the demo
 
 ### Demo 2 – Policy VM Create Fail Portal**
 
-*Creat a new VM that is out of policy. This will show what the failure looks like when creating a disallowed VM via the portal.*
+*Create a new VM that is out of policy. This will show what the failure looks like when creating a disallowed VM via the portal.*
 
 -   *See failure because of enforcement of Allowed SKUs policy:* 
 
@@ -166,7 +167,7 @@ All services created will incur usage costs that you, the replicator of the demo
         
 ### Demo 3 – Policy VM Create Fail Cloud Shell
 
-*Show what the failure looks like if someone tries to create a disallowed VM
+*Show what the failure looks like if someone tries to create a disallowed VM*
 
 -   *Show Cloud shell subscription context*
 
