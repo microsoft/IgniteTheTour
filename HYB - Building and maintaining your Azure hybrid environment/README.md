@@ -24,6 +24,7 @@
 
 - Limit resource creation with Policy
 - Limit resource access with RBAC
+- Standardize policies, RBAC, ARM templates and resource groups with Azure Blueprints (in preview)
 
 ## Session 5: Business continuity planning in a hybrid environment
 
