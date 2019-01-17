@@ -20,7 +20,7 @@ pushd ~/source
 git clone https://github.com/Microsoft/IgniteTheTour
 
 # This repo has the database schema scripts
-git clone https://github.com/Azure-Samples/tailwind-traders
+git clone https://github.com/Microsoft/TailwindTraders.git
 
 ```
 
