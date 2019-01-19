@@ -65,7 +65,7 @@ typings/
 .cache/
 dist/
 .vscode
-.envrc*
+.envrc
 .pgpass
 scripts/up/parameters.json
 scripts/up/template.json
