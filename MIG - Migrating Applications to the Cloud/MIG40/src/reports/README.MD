@@ -6,40 +6,11 @@ Tailwind has some departments that need to know when SKU quantities have been up
 
 ## Running Locally
 
-### Setup SendGrid
+If you'd like to run on Azure, run `make funcdeploy` from the [MIG40 directory](./MIG - Migrating Applications to the Cloud/MIG40) directory.
 
-This function uses SendGrid to send out emails. You will need to open a free account on SendGrid and get an API key. You will also need to create a Transaction Template in SendGrid which will format the data for the report. You can simply copy and paste in the markup from the SENDGRID_TEMPLATE.html file in this project.
-
-### Setup Project
-
-Clone this repo and install dependencies
-
-```
-npm install
-```
-
-Update the SendGrid Functions extension
-
-```
-func extensions install
-```
-
-Add the following variables to your `local.settings.json` file...
-
-```json
-{
-    "AzureWebJobsStorage": "{Storage Account Connection String}",
-    "FUNCTIONS_WORKER_RUNTIME": "node",
-    "SENDGRID_API_KEY": "{API Key From SendGrid}",
-    "PG_CONNECTION": "{PostgreSQL Connection String}",
-    "SENDGRID_TEMPLATE_ID": "{SendGrid Template ID}"
-}
-```
-
-Start the local Functions runtime. The timer trigger runs every 24 hours, so you can manually execute the report by navigating to http://localhost:7071/api/RunCreateReport.
+If not, you can start the local Functions runtime. The timer trigger runs every 24 hours, so you should manually execute the report by navigating to http://localhost:7071/api/RunCreateReport.
 
 ### Modifying To/From/Subject
 
 The To and From addresses can be modified in the `CreateReport/function.json` file. By default, the sender is `tailwind.reports@tailwind.com`. That address does not exist, but SendGrid will still send with it. You may consider swapping that out for something else. To send to multiple email addresses, separate addresses with a comma in the "to" field.
 
-## Deploying To Azure
