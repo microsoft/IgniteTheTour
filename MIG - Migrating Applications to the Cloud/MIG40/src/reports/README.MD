@@ -26,12 +26,14 @@ func extensions install
 
 Add the following variables to your `local.settings.json` file...
 
-```
-"AzureWebJobsStorage": "{Storage Account Connection String}",
-"FUNCTIONS_WORKER_RUNTIME": "node",
-"SENDGRID_API_KEY": "{API Key From SendGrid}",
-"PG_CONNECTION": "{API Key From SendGrid}",
-"SENDGRID_TEMPLATE_ID": "{SendGrid Template ID}"
+```json
+{
+    "AzureWebJobsStorage": "{Storage Account Connection String}",
+    "FUNCTIONS_WORKER_RUNTIME": "node",
+    "SENDGRID_API_KEY": "{API Key From SendGrid}",
+    "PG_CONNECTION": "{PostgreSQL Connection String}",
+    "SENDGRID_TEMPLATE_ID": "{SendGrid Template ID}"
+}
 ```
 
 Start the local Functions runtime. The timer trigger runs every 24 hours, so you can manually execute the report by navigating to http://localhost:7071/api/RunCreateReport.
