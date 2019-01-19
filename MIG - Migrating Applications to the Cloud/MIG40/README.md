@@ -26,13 +26,18 @@ We're assuming you are running this demo on a Mac OS X Machine. If you aren't, y
     brew install jq
     ```
 * A local Docker daemon and properly configured `docker` CLI. See [here](https://docs.docker.com/docker-for-mac/) for installation instructions
-* A [Sendgrid Account](https://sendgrid.com/) with an API key and a Sendgrid template
-  * Create a [new API key](https://app.sendgrid.com/settings/api_keys) with "Full Access" and set it in an environment variable called `SENDGRID_API_KEY`
-  * Create a new [transactional template](https://sendgrid.com/dynamic_templates) in "code" mode:
+
+#### Sendgrid
+
+The 4th demo uses SendGrid to send out emails. If you don't already have a Sendgrid account, you'll need to [open one](https://sendgrid.com/) under the "free tier". Once you have one:
+
+* Create a [new API key](https://app.sendgrid.com/settings/api_keys) with "Full Access" and set it in an environment variable called `SENDGRID_API_KEY`
+* Create a new [transactional template](https://sendgrid.com/dynamic_templates) in "code" mode:
     * Name it whatever you like
     * Copy the contents of [./src/reports/SENDGRID_TEMPLATE.html](./src/reports/SENDGRID_TEMPLATE.html) into the template code
     * Set the template ID into an environment variable called `SENDGRID_TEMPLATE_ID`
-  * [direnv](https://direnv.net/) is really useful to store these environment values, they won't be automatically set in the `Makefile`
+
+Note that [direnv](https://direnv.net/) is a really useful tool to store these environment values. They won't be automatically created or set in the `Makefile`. If you use direnv, you can copy the [./envrc.example](./envrc.example) file into an `.envrc` to get started with these env vars.
 
 #### Environment Variables
 
@@ -99,3 +104,7 @@ This will delete all the resources you've created.
     * After you do that, the script will open the frontend service in your browser (using the Mac/Linux `open` CLI)
 
 ### Demo 4 - Running Reports with Azure Functions
+
+* Run `make funcdeploy`
+  * This script 
+See [./src/reports/README.md](./src/reports/README.md) for details on how to run this demo
