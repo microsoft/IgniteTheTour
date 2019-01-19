@@ -26,6 +26,13 @@ We're assuming you are running this demo on a Mac OS X Machine. If you aren't, y
     brew install jq
     ```
 * A local Docker daemon and properly configured `docker` CLI. See [here](https://docs.docker.com/docker-for-mac/) for installation instructions
+* A [Sendgrid Account](https://sendgrid.com/) with an API key and a Sendgrid template
+  * Create a [new API key](https://app.sendgrid.com/settings/api_keys) with "Full Access" and set it in an environment variable called `SENDGRID_API_KEY`
+  * Create a new [transactional template](https://sendgrid.com/dynamic_templates) in "code" mode:
+    * Name it whatever you like
+    * Copy the contents of [./src/reports/SENDGRID_TEMPLATE.html](./src/reports/SENDGRID_TEMPLATE.html) into the template code
+    * Set the template ID into an environment variable called `SENDGRID_TEMPLATE_ID`
+  * [direnv](https://direnv.net/) is really useful to store these environment values, they won't be automatically set in the `Makefile`
 
 #### Environment Variables
 
@@ -38,16 +45,32 @@ eg: `mig50brketels` for the Azure user `brketels@microsoft.com`
 
 All of the scripts to setup, configure, and tear down the demo are wrapped in a
 Makefile with easy targets grouping them:
-```make setup```
+
+```console
+make setup
+```
 
 To run any of the scripts individually, source the scripts/variables.sh file first:
-``` source ./scripts/variables.sh && ./scripts/up/secrets.sh```
 
+```console
+source ./scripts/variables.sh && ./scripts/up/secrets.sh
+```
 
-Before you run any of the below demos, run `make setup`. If you need to delete everything at any time (including at the end), run `make teardown`. This will delete all the resources you've created.
-## Setup
+## Setup & Teardown
 
-* Create the resources, databases, etc with `make setup`
+Before you run any of the below demos, run:
+
+```console
+make setup
+```
+
+If you need to delete everything at any time (including at the end), run:
+
+```console
+make teardown
+```
+
+This will delete all the resources you've created.
 
 ### Demo 1 - Building and Pushing Images to Azure
 
@@ -75,3 +98,4 @@ Before you run any of the below demos, run `make setup`. If you need to delete e
     * After you see preliminary logs, the script will start tailing logs for the frontend service. When you see this, you can close the logs at any time with `ctrl+C`
     * After you do that, the script will open the frontend service in your browser (using the Mac/Linux `open` CLI)
 
+### Demo 4 - Running Reports with Azure Functions
