@@ -21,5 +21,6 @@ project.lock.json
 .secrets
 appsettings.json
 local.settings.json
+function.json
 
 node_modules

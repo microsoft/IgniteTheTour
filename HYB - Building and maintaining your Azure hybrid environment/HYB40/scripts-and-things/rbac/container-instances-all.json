@@ -1,0 +1,22 @@
+{
+	"Name": "Container Instances Read / Write",
+	"IsCustom": true,
+	"Description": "Create and Delete Containers instances in all scopes.",
+	"Actions": [
+		"Microsoft.ContainerInstance/containerGroups/*",
+		"Microsoft.resources/deployments/*",
+		"Microsoft.Resources/subscriptions/resourceGroups/read"
+	],
+	"NotActions": [
+
+	],
+	"DataActions": [
+
+	],
+	"NotDataActions": [
+
+	],
+	"AssignableScopes": [
+		"/subscriptions/d5b9d4b7-6fc1-46c5-bafe-38effaed19b2"
+	]
+}

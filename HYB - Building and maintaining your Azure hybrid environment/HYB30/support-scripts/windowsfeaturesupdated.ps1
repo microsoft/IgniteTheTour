@@ -3,7 +3,7 @@
     Enables the IIS feature.
 
  .NOTES
-    Author: Neil Peterson
+    Author: Pierre Roman
     Intent: Configure Windows system for Ignote Tour LP4S3.
  #>
 

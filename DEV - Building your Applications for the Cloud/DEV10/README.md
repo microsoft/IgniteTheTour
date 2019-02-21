@@ -72,7 +72,8 @@ Presenter notes:
 * Familiarize yourself [Azure Key Vault](https://docs.microsoft.com/en-us/azure/key-vault/?WT.mc_id=msignitethetour-github-dev10) capabilities
 * Libraries such as [ms-rest-azure](https://www.npmjs.com/package/ms-rest-azure) (Node) and [Microsoft.Azure.Services.AppAuthentication](https://www.nuget.org/packages/Microsoft.Azure.Services.AppAuthentication?WT.mc_id=msignitethetour-github-dev10) (.NET) know how to use MSI, and can be used with Key Vault libraries to authenticate easily with MSI. On your local machine or environments with no MSI enabled, these libraries have alternate methods of authenticating the application so your code doesn't have to change.
 * Currently there is no automated way for an app to pull in secrets when they are changed in Key Vault. You must restart each instance of the app manually as secrets are retrieved at app startup.
-* When updating secrets in Key Vault, you need to create a new version of the secret. The behavior for enabling/disabling is weird so leave old versions enabled for simplicity.
+* When updating secrets in Key Vault, you need to create a new version of the secret. The behavior for enabling/disabling can be confusing so leave old versions enabled for simplicity.
+* There is now a way for App Service to reference Key Vault secrets [directly in app settings](https://docs.microsoft.com/en-us/azure/app-service/app-service-key-vault-references?WT.mc_id=msignitethetour-github-dev10) (no need to use a Key Vault client in the app).
 
 #### Azure Cosmos DB
 
@@ -109,7 +110,7 @@ We'll use VS Code to deploy the frontend to Static Websites in Blob Storage.
 Static Websites can be placed behind a CDN or Azure Front Door to cache data closer to the customer. This also allows users to access a cached version if Blob storage goes down temporarily.
 
 Presenter notes:
-* Static Websites is currently in preview.
+* Static Websites is now generally available (as of Dec 12, 2018).
 
 #### Azure Front Door
 

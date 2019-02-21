@@ -20,11 +20,11 @@
         },
         "virtualNetworkName": {
             "type": "string",
-            "defaultValue": "sqlmivnet"
+            "defaultValue": "vnet1"
         },
         "subnetName": {
             "type": "string",
-            "defaultValue": "sqlmisubnet"
+            "defaultValue": "default"
         },
         "skuName": {
             "defaultValue": "GP_Gen4",
@@ -35,11 +35,11 @@
             "type": "string"
         },
         "storageSizeInGB": {
-            "defaultValue": "32",
+            "defaultValue": 32,
             "type": "int"
         },
         "vCores": {
-            "defaultValue": "16",
+            "defaultValue": 16,
             "type": "int"
         },
         "licenseType": {
@@ -263,19 +263,6 @@
             "dependsOn": [
                 "updateSubnetTemplate"
             ]
-        },
-        {
-            "name": "[concat(parameters('managedInstanceName'), '/tailwind')]",
-            "type": "Microsoft.Sql/managedInstances/databases",
-            "apiVersion": "2017-03-01-preview",
-            "location": "[parameters('location')]",
-            "properties": {
-              "collation": "Latin1_General_100_CS_AS_SC"
-            },
-            "dependsOn": [
-                "[concat('Microsoft.Sql/managedInstances/', parameters('managedInstanceName'))]"
-            ]
-          }
-        
+        }
     ]
 }

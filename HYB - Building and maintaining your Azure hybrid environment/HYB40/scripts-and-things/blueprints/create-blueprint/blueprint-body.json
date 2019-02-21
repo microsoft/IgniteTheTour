@@ -1,0 +1,32 @@
+{
+    "properties": {
+        "description": "Demo Azure DEvOps Blueprint.",
+        "targetScope": "subscription",
+        "parameters": {
+            "tagName": {
+                "type": "string",
+                "metadata": {
+                    "displayName": "Tag name."
+                }
+            },
+            "tagValue": {
+                "type": "string",
+                "metadata": {
+                    "displayName": "Tag value."
+                }
+            },
+            "listOfAllowedSKUs": {
+				"type": "Array",
+				"value": "Standard_LRS"
+			}
+        },
+        "resourceGroups": {
+            "line-of-buisness-app": {
+                "description": "Contains the resource template deployment and a role assignment."
+            },
+            "container-instances": {
+                "description": "Contains the resource template deployment and a role assignment."
+            }
+        }
+    }
+}

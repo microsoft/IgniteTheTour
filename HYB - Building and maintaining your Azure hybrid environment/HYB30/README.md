@@ -1,8 +1,6 @@
 # HYB30 - Maintaining your Azure Environment
 
-Bringing Northwind Traders into the modern cloud has many benefits and in this session you'll see one of the biggest: ongoing maintenance of applications and infrastructure.
-
-Azure Automation offers configuration, maintenance, and monitoring solutions that work within your Azure cloud and also your on-premises data center. Using Azure Automation you can enforce system configuration, detect and alert on configuration drift, and autoremediate configuration issues. In this session, you will learn how to manage the state and configuration of both Windows and Linux systems using Azure Automation.
+Azure Automation offers configuration, maintenance, and monitoring solutions that work within your Azure cloud and also your on-premises data center. Using Azure Automation, you can enforce system configuration, detect and alert on configuration drift, and auto remediate configuration issues. In this session, you will learn how to manage the state and configuration of both Windows and Linux systems using Azure Automation.
 
 ## NOTE: 
 
@@ -22,22 +20,7 @@ Once the environment is ready to go, these steps need to be manually performed.
 
 - In Azure Automaton [update the Windows Service caching](https://docs.microsoft.com/en-us/azure/automation/automation-vm-inventory) from 30 min to 10 seconds.
 - In Azure Automation, [configure the storage account](https://docs.microsoft.com/en-us/azure/automation/change-tracking-file-contents) for storing file diffs.
-
-## Pre-create alert data for demo
-
-- [Create Alert and Action Group](https://docs.microsoft.com/en-us/azure/monitoring-and-diagnostics/alert-log?toc=/azure/azure-monitor/toc.json) for both [email and runbook](https://docs.microsoft.com/en-us/azure/monitoring-and-diagnostics/monitoring-action-groups?toc=/azure/azure-monitor/toc.json).
-- Stop IIS service on VM and validate both alerts and runbook remediation.
 - Update `host` file on Linux system.
-
-**Alert Query**
-
-```
-ConfigurationChange
-| where ConfigChangeType == "WindowsServices"
-| where SvcName == "W3SVC"
-| where SvcState == "Stopped"
-| project Computer
-```
 
 ## Demo 1 - Configuration, State, Alert
 
@@ -78,11 +61,11 @@ ConfigurationChange
 **Log Analytics and simple alert**
 
 - Create Log Analytics query to surface failed IIS
-- Create alert based on query, send to email*
-- Create action group to send email and configure with alert
-- At this point, pull up the pre-created alert email.
+- Create alert based on query
+- Create action group to send email
+- Create action group to trigger runbook
 
-**Log analytics query for alert:**
+**Log analytics query for alert**
 
 ```
 ConfigurationChange
@@ -92,9 +75,13 @@ ConfigurationChange
 | project Computer
 ```
 
-**Bonus: File diff**
+**Stop IIS on VM**
 
-This is not IIS-related, but would be cool to show the change tracking capabilities for files.
+At this point, stop IIS on a VM. Once completed cary on with these steps while giving the alert action groups an opportunity to run.
+
+**File diff**
+
+This is not IIS-related, but a cool solution.
 
 - Show file change solution and changed Linux host contents
 - Create log analytics query to surface file changes*
@@ -105,20 +92,6 @@ This is not IIS-related, but would be cool to show the change tracking capabilit
 ConfigurationChange
 | where ConfigChangeType == "Files"
 | where FileSystemPath == "/etc/host.conf"
-```
-
-## Demo 3 - Azure Automation Runbook
-
-Create alert and Runbook action group
-
-**Log analytics query for alert:**
-
-```
-ConfigurationChange
-| where ConfigChangeType == "WindowsServices"
-| where SvcName == "W3SVC"
-| where SvcState == "Stopped"
-| project Computer
 ```
 
 **Azure Automation**

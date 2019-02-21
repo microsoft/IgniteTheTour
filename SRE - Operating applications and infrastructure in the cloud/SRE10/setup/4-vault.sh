@@ -37,6 +37,9 @@ az provider register -n Microsoft.KeyVault &>> $base_source_path/../setup/log/4-
 echo "Creating keyvault"
 az keyvault create --name "${LEARNING_PATH}${SESSION_NUMBER}-${CITY}" --resource-group $KEYVAULT_RG --location $LOCATION &>> $base_source_path/../setup/log/4-vault.log
 
+echo "Adding a key for the app resource group"
+az keyvault secret set --vault-name "${LEARNING_PATH}${SESSION_NUMBER}-${CITY}" --name "app-rg-${APP_ENVIRONMENT}" --value $APP_RG &>> $base_source_path/../setup/log/4-vault.log
+
 echo "Adding a key for the inventory service connection string."
 connection_string="Server=tcp:${SERVERNAME}.database.windows.net,1433;Initial Catalog=tailwind;Persist Security Info=False;User ID=${DBUSER};Password=${DBPASS};MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
 

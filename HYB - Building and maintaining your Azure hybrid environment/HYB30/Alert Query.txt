@@ -1,0 +1,5 @@
+ConfigurationChange
+| where ConfigChangeType == "WindowsServices"
+| where SvcName == "W3SVC"
+| where SvcState == "Stopped"
+| project Computer

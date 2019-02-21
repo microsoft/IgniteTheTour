@@ -1,5 +1,9 @@
 # SRE10 - Modernizing your infrastructure: moving to Infrastructure as Code
 
+This is a work-in-progress. Please feel free to update to clarify issues that you observe. 
+
+## Flavor text around the context for this set of demos
+
 Deploying applications to the cloud can be as simple as clicking the mouse a few times and running "git push". The applications running at Tailwind Traders, however, are quite a bit more complex and, correspondingly, so are our deployments. The only way that we can reliably deploy complex applications (such as our sales and fulfillment system) is to automate it.
 
 In this module, you'll learn how Tailwind Traders uses automation with Azure Resource Management (ARM) templates to provision infrastructure, reducing the chances of errors and inconsistency caused by manual point and click. Once in place, we move on to deploying our applications using continuous integration and continuous delivery, powered by Azure DevOps.
@@ -12,11 +16,16 @@ Note: the git commands below require some auth setup, see [Appendix A](#Appendix
 
 ### Get the code
 
+We're going to make a working directory called `source` and then clone the setup repo into 
 ```
 mkdir ~/source
 pushd ~/source
 
 # This repo has all the setup scripts for SRE10 and application code
+git clone https://dev.azure.com/ignite-tour-lp5/_git/SRE10-Setup
+
+# Setup scripts are also available publicly but may not be up to date
+
 git clone https://github.com/Microsoft/IgniteTheTour
 
 # This repo has the database schema scripts
@@ -24,29 +33,51 @@ git clone https://github.com/Azure-Samples/tailwind-traders
 
 ```
 
+If you are going to use the public repo:
+
+```
+pushd ~/source/IgniteTheTour/SRE\ -\ Operating\ applications\ and\ infrastructure\ in\ the\ cloud/SRE10
+```
+
+If you are going to use the private repo:
+
+```
+pushd ~/source/SRE10-Setup
+```
+
 ### Set up the demo environment
 
-By default, the scripts will set up a resource group named `SRE10-${CITY}-${APP_ENVIRONMENT}` so each person will have an individual standalone environment.
-
-All of the naming parameters are defined in `./setup/0-params.sh`.
+The setup script depends on a few variables that can be modified in `0-params.sh`.
 
 ```
-pushd ~/source/IgniteTheTour/SRE - Operating applications and infrastructure in the cloud/SRE10
+CITY="berlin"
+LEARNING_PATH="SRE"
+SESSION_NUMBER="10"
+SUBSCRIPTION="Ignite the Tour"
+LOCATION="westeurope"
+```
 
-# edit the parameters to meet your needs
+You should modify `CITY` and (maybe) `LOCATION` as appropriate. `APP_ENVIRONMENT` will get set during the run of setup.sh and doesn't need to be modified.
+
+By default, the script will set up 3 resource groups in the form of `SRE10-${CITY}-${APP_ENVIRONMENT}` so each person will have an individual standalone environment.
+
+```
+# edit the CITY (and potentially) LOCATION parameters.
 code ./setup/0-params.sh
 
+# run the setup
 ./setup.sh
-
-popd  
 
 ```
 
-Do this once for each app environment - `dev`, `uat`, and `prod`.
 
 Output from each of the commands in the scripts can be found in a corresponding log file in `./setup/log` (e.g. for ./2-database.sh there will be a ./2-database.log).
 
 ### Create the Azure DevOps Project
+
+In this next step you are going to create the project that will be running your demo with pipelines. You'll create your own throwaway organization and the `SRE10` project along with 4 repos. In the following screenshots, we'll use `modernops` as a placeholder to illustrate the process.
+
+Where we use `{YOURORG}`, you'll replace with the organization that you create.
 
 #### New Organization
 
@@ -94,22 +125,23 @@ Output from each of the commands in the scripts can be found in a corresponding 
   * `product-service`
   * `inventory-service`
 
-* Clone the setup repository to your local workstation
-
-```
-git clone https://github.com/Microsoft/IgniteTheTour
-```
+* You should already have the setup repository cloned to your workstation. If not, go ahead and follow the instructions above for the setup repo.
 
 * Clone the empty repositories that we just set up to your local workstation
 
 ```
-git clone https://dev.azure.com/modernops/SRE10/_git/inventory-service
-git clone https://dev.azure.com/modernops/SRE10/_git/product-service
-git clone https://dev.azure.com/modernops/SRE10/_git/frontend
-git clone https://dev.azure.com/modernops/SRE10/_git/web-app-infra
+pushd ~/source
+git clone https://dev.azure.com/{YOURORG}/SRE10/_git/inventory-service
+git clone https://dev.azure.com/{YOURORG}/SRE10/_git/product-service
+git clone https://dev.azure.com/{YOURORG}/SRE10/_git/frontend
+git clone https://dev.azure.com/{YOURORG}/SRE10/_git/web-app-infra
 ```
 
-* Stage starting content to the local repo
+Checkpoint:
+
+Do a directory listing. Minimally should have your 4 empty reposistories and the setup repository SRE10-Setup in the `~/source` directory.
+
+* Stage starting content to the empty repos.
 
   * PowerShell
 
@@ -129,13 +161,15 @@ cp -r ./SRE10-Setup/demos/src/product-service/* -destination ./product-sevice/
 cp -r ./SRE10-Setup/demos/src/inventory-service/* ./inventory-service/
 ```
 
-* Change into each directory, commit, and push each of the repos up to Azure DevOps
+* Change into each directory (`web-app-infra`, `frontend`, `product-service`, and `inventory-service`), commit, and push each of the repos up to Azure DevOps
 
 ```
 git add .
 git commit -m 'initial commit'
 git push origin master
 ```
+
+Now each of your repos should have the first commit.
 
 #### Create the build pipelines
 
@@ -288,7 +322,7 @@ az webapp deployment source config-zip --resource-group SRE10-app-berlin-dev  --
 * Click OK
 ![Web app details](https://ignitethetour.blob.core.windows.net/assets/SRE10/web_app_details1.png)
 * Click Create
-* From the portal, select the resource group `SRE10-Berlin-manualdeploy`
+* From the portal, select the resource group `SRE10-{YOURCITY}-manualdeploy` (navigate to it from the top-level Resource Group menu)
 * Show the created or creating web application
 ![Web app deployment](https://ignitethetour.blob.core.windows.net/assets/SRE10/web_app_deployment.png)
 * Leave the portal open to this location for the next demo

@@ -8,7 +8,7 @@ Tailwind has some departments that need to know when SKU quantities have been up
 
 ### Setup SendGrid
 
-This function uses SendGrid to send out emails. You will need to open a free account on SendGrid and get an API key. You will also need to create a Transaction Template in SendGrid which will format the data for the report. You can simply copy and paste in the markup from the SENDGRID_TEMPLATE.html file in this project.
+This function uses SendGrid to send out emails. You will need to open a free account on SendGrid and get an API key. You will also need to create a Transaction Template in SendGrid which will format the data for the report. You can simply copy and paste in the markup from the [SENDGRID_TEMPLATE.html](./SENDGRID_TEMPLATE.html) file in this project.
 
 ### Setup Project
 
@@ -18,11 +18,13 @@ Clone this repo and install dependencies
 npm install
 ```
 
-Update the SendGrid Functions extension
+Update the SendGrid Functions extension:
 
 ```
 func extensions install
 ```
+
+**Note: you'll need [dotnet](https://dotnet.microsoft.com/download) installed and on your `PATH` to install extensions.**
 
 Add the following variables to your `local.settings.json` file...
 

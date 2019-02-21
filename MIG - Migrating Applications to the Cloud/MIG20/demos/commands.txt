@@ -1,0 +1,102 @@
+-- NOTES ------------------------
+
+Username = username
+password = d04f69d38b163f60A1!
+
+-- PREPARATION ------------------
+
+az account set --subscription 'Ignite the Tour'
+
+RESOURCE_GROUP_7='LP2S2-test-7'
+RANDOM_STR='6c4b8e'
+CONTAINER_REGISTRY=acr${RANDOM_STR}
+CONTAINER_IMAGE='ignite-inventory-service:latest'
+CONTAINER_REGISTRY_PASSWORD=$(az acr credential show -n $CONTAINER_REGISTRY | jq -r .passwords[0].value)
+
+CONNECTION_STRING_2012='Server=tcp:13.68.175.168,1433;Initial Catalog=tailwind;Persist Security Info=False;User ID=username;Password=d04f69d38b163f60A1!;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=True;Connection Timeout=30;'
+CONNECTION_STRING_MI='Server=tcp:sqlmi4e9f1e.0b30e6402ec5.database.windows.net,1433;Initial Catalog=tailwind;Persist Security Info=False;User ID=username;Password=d04f69d38b163f60A1!;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=True;Connection Timeout=30;'
+
+VM_NAME='inventory-service'
+az vm user update -u azureuser --ssh-key-value "$(< ~/.ssh/id_rsa.pub)" -g $RESOURCE_GROUP_7 -n $VM_NAME
+
+IP_FQDN=$(az vm show -g $RESOURCE_GROUP_7 -n $VM_NAME -d | jq -r .publicIps)
+
+ssh 'azureuser@'$IP_FQDN << EOM
+docker login -u ${CONTAINER_REGISTRY} -p ${CONTAINER_REGISTRY_PASSWORD} ${CONTAINER_REGISTRY}.azurecr.io
+docker rm -f ignite-service
+docker pull ${CONTAINER_REGISTRY}.azurecr.io/${CONTAINER_IMAGE}
+docker run --name ignite-service --restart always -d -p 8080:8080/tcp \\
+    -e PORT=8080 \\
+    -e CUSTOMCONNSTR_InventoryContext='${CONNECTION_STRING_2012}' \\
+    ${CONTAINER_REGISTRY}.azurecr.io/${CONTAINER_IMAGE}
+EOM
+
+RESOURCE_GROUP_2='LP2S2-test-2'
+VM_NAME_MONGO='mongodb1'
+
+az vm user update -u azureuser --ssh-key-value "$(< ~/.ssh/id_rsa.pub)" -g $RESOURCE_GROUP_2 -n $VM_NAME_MONGO
+
+clear
+
+--------------------------------
+
+RESOURCE_GROUP_COSMOS='lp2s2-cosmosdbgroup'
+LOCATION_COSMOS='eastus'
+ACCOUNT_NAME_COSMOS='lp2s2cosmosdbaccount'
+
+az account set --subscription 'Ignite the Tour'
+
+az group create --name $RESOURCE_GROUP_COSMOS --location $LOCATION_COSMOS
+
+az cosmosdb create \
+    --resource-group $RESOURCE_GROUP_COSMOS \
+    --name $ACCOUNT_NAME_COSMOS \
+    --kind MongoDB \
+    --locations "East US"=0 \
+    --default-consistency-level "ConsistentPrefix" \
+    --enable-multiple-write-locations true
+
+--------------------------------
+
+ssh 'azureuser@'137.117.33.211
+
+mongodump --collection inventory --db tailwind
+
+--- mongorestore migration
+
+mongorestore --host HOST:10255 -u USER -p PASSWORD --ssl --sslAllowInvalidCertificates inventory.bson --numInsertionWorkersPerCollection 4 --batchSize 24 --db tailwind --collection inventory
+
+--------------------------------
+
+tailwind-migration
+
+13.68.175.168
+username
+d04f69d38b163f60A1!
+
+sqlmi4e9f1e.0b30e6402ec5.database.windows.net
+username
+d04f69d38b163f60A1!
+
+\\storage6c4b8e.file.core.windows.net\share1
+
+AZURE\storage6c4b8e
+
+t9U7ysu882Jy3Y8kdRa0bk/wNHhGk+75SGebaizG3KHCMDO/SvoW/QWlJb6414a4dNhoUCFoiWFJli7tA6ZYEQ==
+
+https://storage6c4b8e.blob.core.windows.net/container1?sp=rwdl&st=2019-01-16T11:30:37Z&se=2020-01-17T11:30:00Z&sv=2018-03-28&sig=79fe3t5zhkPwncwVyp%2FZO8CO9ka1B90K4KlUWGQ6EkY%3D&sr=c
+
+tailwind-migration-activity
+
+----
+
+ssh 'azureuser@'$IP_FQDN << EOM
+docker login -u ${CONTAINER_REGISTRY} -p ${CONTAINER_REGISTRY_PASSWORD} ${CONTAINER_REGISTRY}.azurecr.io
+docker rm -f ignite-service
+docker pull ${CONTAINER_REGISTRY}.azurecr.io/${CONTAINER_IMAGE}
+docker run --name ignite-service --restart always -d -p 8080:8080/tcp \\
+    -e PORT=8080 \\
+    -e CUSTOMCONNSTR_InventoryContext='${CONNECTION_STRING_MI}' \\
+    ${CONTAINER_REGISTRY}.azurecr.io/${CONTAINER_IMAGE}
+EOM
+

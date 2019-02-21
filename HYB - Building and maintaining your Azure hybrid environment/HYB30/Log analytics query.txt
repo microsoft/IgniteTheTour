@@ -1,0 +1,6 @@
+ConfigurationChange
+| where ConfigChangeType == "WindowsServices"
+| where SvcName == "W3SVC"
+| where SvcState == "Stopped"
+| summarize count() by Computer, bin(TimeGenerated, 7d)
+| render piechart

@@ -4,14 +4,14 @@
     Import DSC configuration.
 
 .NOTES
-    Author: Neil Peterson
+    Author: Pierre Roman
     Intent: Sample to import DSC configuration.
  #>
 
 $import = @{
     SourcePath = "windowsfeaturesupdated.ps1";
-    ResourceGroupName = "HYB30";
-    AutomationAccountName = "mikqh7uwvwxn4"
+    ResourceGroupName = "TWT-HYB";
+    AutomationAccountName = "guar5vbmsjxb2"
 }
 
 Import-AzAutomationDscConfiguration @import -Published
