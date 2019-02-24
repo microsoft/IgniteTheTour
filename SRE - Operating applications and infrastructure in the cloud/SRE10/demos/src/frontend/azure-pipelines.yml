@@ -18,8 +18,12 @@ steps:
   displayName: 'Install Node.js'
 
 - script: |
-    echo "PRODUCT_SERVICE_BASE_URL=https://tw-product-${LEARNING_PATH}${SESSION_NUMBER}-dev.azurewebsites.net" > .env
-    echo "INVENTORY_SERVICE_BASE_URL=https://tw-inventory-${LEARNING_PATH}${SESSION_NUMBER}-dev.azurewebsites.net" >> .env
+    rm -rf ./dist
+    rm -rf ./cache
+
+- script: |
+    echo "PRODUCT_SERVICE_BASE_URL=https://tw-product-${LEARNING_PATH}${SESSION_NUMBER}-${CITY}-dev.azurewebsites.net" > .env
+    echo "INVENTORY_SERVICE_BASE_URL=https://tw-inventory-${LEARNING_PATH}${SESSION_NUMBER}-${CITY}-dev.azurewebsites.net" >> .env
 
 - script: |
     npm install
@@ -31,7 +35,47 @@ steps:
     rootFolderOrFile: './dist'
     includeRootFolder: false
     archiveType: 'zip'
-    archiveFile: '$(Build.ArtifactStagingDirectory)/Frontend.zip'
+    archiveFile: '$(Build.ArtifactStagingDirectory)/Frontend-dev.zip'
+
+- script: |
+    rm -rf ./dist
+    rm -rf ./cache
+
+- script: |
+    echo "PRODUCT_SERVICE_BASE_URL=https://tw-product-${LEARNING_PATH}${SESSION_NUMBER}-${CITY}-uat.azurewebsites.net" > .env
+    echo "INVENTORY_SERVICE_BASE_URL=https://tw-inventory-${LEARNING_PATH}${SESSION_NUMBER}-${CITY}-uat.azurewebsites.net" >> .env
+
+- script: |
+    npm install
+    npm run build
+  displayName: 'npm install and build'
+
+- task: ArchiveFiles@2
+  inputs:
+    rootFolderOrFile: './dist'
+    includeRootFolder: false
+    archiveType: 'zip'
+    archiveFile: '$(Build.ArtifactStagingDirectory)/Frontend-uat.zip'
+
+- script: |
+    rm -rf ./dist
+    rm -rf ./cache
+
+- script: |
+    echo "PRODUCT_SERVICE_BASE_URL=https://tw-product-${LEARNING_PATH}${SESSION_NUMBER}-${CITY}-prod.azurewebsites.net" > .env
+    echo "INVENTORY_SERVICE_BASE_URL=https://tw-inventory-${LEARNING_PATH}${SESSION_NUMBER}-${CITY}-prod.azurewebsites.net" >> .env
+
+- script: |
+    npm install
+    npm run build
+  displayName: 'npm install and build'
+
+- task: ArchiveFiles@2
+  inputs:
+    rootFolderOrFile: './dist'
+    includeRootFolder: false
+    archiveType: 'zip'
+    archiveFile: '$(Build.ArtifactStagingDirectory)/Frontend-prod.zip'
 
 - task: PublishBuildArtifacts@1
   displayName: 'Publish Artifact: drop'

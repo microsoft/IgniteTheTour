@@ -17,8 +17,8 @@
       "type": "sendGrid",
       "name": "message",
       "apiKey": "SENDGRID_API_KEY",
-      "to": "burke.holland@microsoft.com",
-      "from": "tailwind.reports@tailwind.com",
+      "to": "%RECIPIENT_EMAIL%",
+      "from": "%SENDER_EMAIL%",
       "direction": "out"
     }
   ]

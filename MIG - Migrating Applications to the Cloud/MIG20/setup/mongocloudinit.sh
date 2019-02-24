@@ -16,10 +16,8 @@ echo "mongodb-org-shell hold" | sudo dpkg --set-selections
 echo "mongodb-org-mongos hold" | sudo dpkg --set-selections
 echo "mongodb-org-tools hold" | sudo dpkg --set-selections
 
-sudo service mongod start
+sudo sed -i -e "s/127.0.0.1/0.0.0.0/g" /etc/mongod.conf
 
-#mongo --eval "use tailwind"
-#mongo --eval "db.dropUser('username')"
-#mongo --eval "db.createUser({user:'REPLACEUSERNAME',pwd:'REPLACEPASSWORD',roles:[{role:'dbAdmin',db:'tailwind'}]})"
+sudo service mongod start
 
 echo 'cloud-init complete!' > /home/azureuser/cloud-init-complete.txt

@@ -1,0 +1,23 @@
+{
+	"Name": "Restart Virtual Machines",
+	"IsCustom": true,
+	"Description": "Restart Virtual Machines.",
+	"Actions": [
+		"Microsoft.Compute/virtualMachines/read",
+		"Microsoft.Compute/virtualMachines/start/action",
+		"Microsoft.Compute/virtualMachines/restart/action",
+		"Microsoft.Resources/subscriptions/resourceGroups/read"
+	],
+	"NotActions": [
+
+	],
+	"DataActions": [
+
+	],
+	"NotDataActions": [
+
+	],
+	"AssignableScopes": [
+		"/subscriptions/d5b9d4b7-6fc1-46c5-bafe-38effaed19b2"
+	]
+}

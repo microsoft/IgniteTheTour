@@ -15,6 +15,9 @@ acrbuild: login
 	@cd src/inventory-service/InventoryService.Api && ../../../scripts/dockerinventory.sh
 	@cd src/product-service && ../../scripts/dockerproduct.sh
 
+acrlist: login
+	@scripts/acr-list.sh
+
 localacrbuild: login
 	@scripts/dockeracrpush.sh
 
@@ -67,6 +70,9 @@ funcsetup:
 funcdeploy:
 	@cd src/reports/ && ../../scripts/up/funcdeploy.sh
 
+funcdeploy-local:
+	@cd src/reports && ../../scripts/up/funcdeploy-local.sh
+
 pgload:
 	@scripts/pgload.sh
 
@@ -89,3 +95,6 @@ docker-inventory:
 
 docker-product:
 	@cd src/product-service && docker build -t twt-product .
+
+devshell:
+	./scripts/devshell.sh

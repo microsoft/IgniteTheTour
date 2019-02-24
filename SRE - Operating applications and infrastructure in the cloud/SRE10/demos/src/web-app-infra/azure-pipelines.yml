@@ -2,7 +2,7 @@ resources:
 - repo: self
 
 variables:
-  CITY: 'berlin'
+  CITY: 'YOURCITYNAME'
   LEARNING_PATH: 'SRE'
   SESSION_NUMBER: '10'
 

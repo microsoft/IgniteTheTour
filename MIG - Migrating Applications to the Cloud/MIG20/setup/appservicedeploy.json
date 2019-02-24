@@ -98,50 +98,6 @@
         },
         {
             "apiVersion": "2016-03-01",
-            "name": "[variables('inventoryServiceName')]",
-            "type": "Microsoft.Web/sites",
-            "properties": {
-                "name": "[variables('inventoryServiceName')]",
-                "siteConfig": {
-                    "appSettings": [
-                        {
-                            "name": "WEBSITES_ENABLE_APP_SERVICE_STORAGE",
-                            "value": "false"
-                        },
-                        {
-                            "name": "WEBSITE_HTTPLOGGING_RETENTION_DAYS",
-                            "value": "0"
-                        }
-                    ],
-                    "appCommandLine": "",
-                    "linuxFxVersion": "DOCKER|nginx"
-                },
-                "serverFarmId": "[concat('/subscriptions/', subscription().subscriptionId,'/resourcegroups/', resourceGroup().name, '/providers/Microsoft.Web/serverfarms/', variables('hostingPlanName'))]",
-                "hostingEnvironment": "[variables('hostingEnvironment')]"
-            },
-            "location": "[parameters('location')]",
-            "dependsOn": [
-                "[concat('Microsoft.Web/serverfarms/', variables('hostingPlanName'))]"
-            ],
-            "resources": [
-                {
-                    "apiVersion": "2015-08-01",
-                    "name": "connectionstrings",
-                    "type": "config",
-                    "dependsOn": [
-                        "[resourceId('Microsoft.Web/sites', variables('inventoryServiceName'))]"
-                    ],
-                    "properties": {
-                        "InventoryContext": {
-                            "value": "[concat('Server=tcp:', parameters('sqlVMIPAddress'), ',1433;Initial Catalog=tailwind;User Id=', parameters('sqlAdminLogin'), ';Password=', parameters('sqlAdminPassword'), ';MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=True;Connection Timeout=30;')]",
-                            "type": "SQLServer"
-                        }
-                    }
-                }
-            ]
-        },
-        {
-            "apiVersion": "2016-03-01",
             "name": "[variables('productServiceName')]",
             "type": "Microsoft.Web/sites",
             "properties": {

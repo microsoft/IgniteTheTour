@@ -34,13 +34,15 @@ Add the following variables to your `local.settings.json` file...
 "SQL_SERVER": "{Fully Qualified Server Name}",
 "SQL_DATABASE": "{Name Of Database With Inventory Table}",
 "SENDGRID_API_KEY": "{API Key From SendGrid}",
-"SENDGRID_TEMPLATE_ID": "{SendGrid Template ID}"
+"SENDGRID_TEMPLATE_ID": "{SendGrid Template ID}",
+"RECIPIENT_EMAIL": "{To Email Address}",
+"SENDER_EMAIL": "{From Email Address}"
 ```
 
 Start the local Functions runtime. The timer trigger runs every 24 hours, so you can manually execute the report by navigating to http://localhost:7071/api/RunCreateReport.
 
 ### Modifying To/From/Subject
 
-The To and From addresses can be modified in the `CreateReport/function.json` file. By default, the sender is `tailwind.reports@tailwind.com`. That address does not exist, but SendGrid will still send with it. You may consider swapping that out for something else. To send to multiple email addresses, separate addresses with a comma in the "to" field.
+For the sender, you can use `tailwind.reports@tailwind.com`. That address does not exist, but SendGrid will still send with it. You may consider swapping that out for something else. To send to multiple email addresses, separate addresses with a comma in the "to" field.
 
 ## Deploying To Azure

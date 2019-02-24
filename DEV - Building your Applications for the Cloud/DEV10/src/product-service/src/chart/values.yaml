@@ -48,3 +48,7 @@ nodeSelector: {}
 tolerations: []
 
 affinity: {}
+
+aksIngress:
+  baseDomain: ''
+  

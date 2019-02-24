@@ -1,16 +1,16 @@
 
 Param(
-    [string]$dbAdminPassword
+    [string]$dbAdminPassword,
+    [string]$dbName,
+	[string]$serverName,
+	[string]$workingDir
 )
 # variables
-$workingDir = $env:SYSTEM_DEFAULTWORKINGDIRECTORY
-$serverName = "lp3s3-db-server"
-$dbName = "lp3s3-db"
 $dbUser = $env:DBADMINUSERNAME
 $dbPass = $dbAdminPassword
 
 # derived variables
-$sqlScript = "$workingDir/Azure-Samples.ignite-tour-lp3s3/sql/01-initialdata.sql"
+$sqlScript = "$workingDir/sql/01-initialdata.sql"
 $connectionString = "Server=tcp:$serverName.database.windows.net,1433;Initial Catalog=$dbName;Persist Security Info=False;User ID=$dbUser;Password=$dbPass;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
 
 Write-Host "Sql Script = $sqlScript"

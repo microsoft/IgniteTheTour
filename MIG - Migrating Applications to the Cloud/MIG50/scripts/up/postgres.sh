@@ -2,7 +2,9 @@
 set -eou pipefail
 source ./scripts/variables.sh
 
-PUBLIC_IP=`curl ifconfig.co`  
+PUBLIC_IP=`curl -4 ifconfig.co`
+
+echo "Creating PostgreSQL $(pgname) in location $(location)"
 
 az postgres server create -l $(location) -g $(rg) -n $(pgname) -u $(pguserbase) -p $(pgpass) --sku-name GP_Gen5_2
 az postgres db create -g $(rg) -s $(pgname) -n $(dbname)

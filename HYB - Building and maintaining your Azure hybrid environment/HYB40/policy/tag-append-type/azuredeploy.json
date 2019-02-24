@@ -1,0 +1,23 @@
+{
+   "if": {
+      "allOf": [
+         {
+            "field": "[concat('tags[', parameters('tagName'), ']')]",
+            "exists": "false"
+         },
+         {
+				"field": "type",
+				"equals": "[parameters('resourceType')]"
+         }
+      ]
+   },
+   "then": {
+      "effect": "append",
+      "details": [
+         {
+            "field": "[concat('tags[', parameters('tagName'), ']')]",
+            "value": "[parameters('tagValue')]"
+         }
+      ]
+   }
+}

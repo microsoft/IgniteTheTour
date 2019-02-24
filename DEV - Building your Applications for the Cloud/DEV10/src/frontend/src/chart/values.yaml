@@ -54,3 +54,8 @@ tolerations: []
 affinity: {}
 
 displaySqlInfo: ""
+customTitle: "TAILWIND TRADERS"
+
+aksIngress:
+  baseDomain: ''
+  

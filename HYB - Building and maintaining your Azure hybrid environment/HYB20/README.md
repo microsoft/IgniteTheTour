@@ -71,7 +71,7 @@ Azure Firewall requires the creation of a Resource Group and Virtual Network. Us
 3.  Review the list of recommendations for the subscription, discussing
     individual recommendations
 
-4.  Click the recommendation “Resolve endpoint protection health issues”
+4.  Click the recommendation “Install endpoint protection solution on virtual machines”
 
 5.  Click Endpoint Protection not installed on Azure VMs
 
