@@ -110,6 +110,162 @@ Prerequisites: Demo One Complete
 11. Verify that the virtual network gateway appears in the list of virtual
     network gateways
 
+## DEMO THREE: Azure Network Adapter for Windows Server 2019
+
+Prerequisites: 
+- Deploy Windows Server 2019 named fs-04-2019 and install Windows Admin Center. 
+    - Windows Server 2019 Server is domain joined to tailtrade.internal domain.
+
+### Instructions
+1.	Sign on to Windows Admin Center using the administrator@tailtrade.internal domain admin account
+2.	In All Connections, select fs-04-2012.tailtrade.internal.
+3.	In the fs-04-2019.tailtrade.internal blade, click Network.
+4.	In the Network blade, click Add Azure Network Adapter
+5.	When prompted, click Register Windows Admin Center to Azure.
+6.	On the Azure Integration page, click Register.
+7.	On the Register the gateway with Azure page, click Copy Code and then click Device Login. This will open a new tab.
+8.	On the new tab, paste the code from step 7 and then click Continue.
+9.	On the sign in prompt, sign in with an account that has Owner permissions.
+10.	Once signed in, switch back to the original tab. Ensure that the GUID of the tenant you wish to associate Windows Admin Center is selected and click Register.
+11.	Right click on the link “Go to the Azure AD App Registration” link and open it in a new tab. This will open a page linked to the app that will allow for Windows Admin Center to be registered with Azure AD.
+12.	In the Azure AD App’s Azure Console page, click Settings and in the settings blade click Required Permissions.
+13.	Click Grant Permissions and then click Yes.
+14.	Switch back to the Windows Admin Center page and click Close under Register the gateway with Azure.
+15.	Click Windows Admin Center, click fs-04-2019.tailtrade.internal and then click Network.
+16.	Click Add Azure Network Adapter
+17.	In the Add Azure Network Adapter page, select the Subscription, Location, and Virtual Network that you wish to associate with Azure Network Adapter.
+18.	Use the default gateway subnet option, SKU settings and VPN settings and click Create.
+19.	In approximately half an hour, a new VPN connection will exist between the server and the Azure VNet.
+
+## DEMO FOUR: Azure File Sync
+
+Prerequisites:
+
+-   Domain Controller. DC.tailwind.internal
+
+-   FS-01.tailwind.internal: Two volumes, C: and E:
+
+    -   e:\\TailDocs is empty
+
+-   FS-02.tailwind.internal: Two volumes, C: and E:
+
+    -   e:\\TailDocs contains three subfolders, Folder-1, Folder-2 and Folder-3
+
+### Instructions
+1.  In the Azure search bar, type file sync.
+
+2.  Click on File Sync
+
+3.  On the Deploy Storage Sync page, provide the following information:
+
+    -   Name: TailTradeFilesync
+
+    -   Resource Group: TailTrade-RG
+
+    -   Region: Same region used for all previous demonstrations
+
+4.  Click Create.
+
+5.  On FS-01, perform the following steps
+
+    -   Download and install the Azure File Sync agent.
+        <https://go.microsoft.com/fwlink/?linkid=858257>
+
+    -   Sign in using an account that has Owner permission in the Azure
+        subscription that hosts the File Sync Service
+
+    -   Select the TailTrade-RG resource group and TailTradeFileSync storage
+        sync service and click Register
+
+    -   Repeat these steps on FS-02
+
+6.  In the Azure Portal search bar, type storage accounts
+
+7.  In the Storage Accounts blade, click Add
+
+8.  On the Create Storage Account blade, provide the following details:
+
+    -   Resource group: TailTrade-RG
+
+    -   Storage account name: TailTradeSG
+
+    -   Region: Same region used for all previous demonstrations
+
+9.  Click Review and Create
+
+10. After validation completes, click Create.
+
+11. After creation completes, navigate to the TailTradeSG storage account.
+
+12. Under Services, click Files.
+
+13. In the Files blade, click new File Share.
+
+14. Enter the name Taildocs and click Create.
+
+15. In the Storage Sync Services blade, click ON TailTradeFileSync
+
+16. In the TailTradeFileSync blade, click new Sync Group.
+
+17. In the Sync Group blade, provide the following information
+
+    -   Sync group name: Syncdocs
+
+    -   Storage Account: TailTradeSG
+
+    -   Azure File Share: taildocs
+
+18. Click Create.
+
+19. Switch to FS-2.
+
+20. On the data volume, E:, view the e:\\TailDocs folder and validate that it
+    contains three subfolders, Folder-1, Folder-2 and Folder-3.
+
+21. Switch to FS-1
+
+22. On the data volume, E:, view the e:\\TailDocs folder and validate that it
+    contains no subfolders.
+
+23. In the Azure portal, in the TailTradeFileSync storage sync service, click
+    Sync Groups and then click TailDocs.
+
+24. In the TailDocs sync group, click Add Server Endpoint. From the dropdown,
+    ensure that you select FS-2.tailtrade.internal.
+
+25. Specify the path as E:\\TailDocs
+
+26. Set Cloud Tiering to Enabled and the Volume Free Space to 50%
+
+27. Click Create.
+
+28. Wait until the Health status of server FS-2.tailtrade.internal switches from
+    Pending to the green checkmark.
+
+29. Click on the taildocs Azure File Share under Cloud Endpoints, then click the
+    tailtrades storage account. This will open the storage account properties.
+    Click Files and then click the taildocs file share. Verify that Folder-1,
+    Folder-2, and Folder-3 are now present.
+
+30. Navigate back to the TailDocs sync group, click Add Server Endpoint. From
+    the dropdown, ensure that you select FS-1.tailtrade.internal
+
+31. Specify the path as E:\\TailDocs
+
+32. Set Cloud Tiering to Enabled and the Volume Free Space to 50%
+
+33. Click Create.
+
+34. Wait until the Health status of server FS-1.tailtrade.internal switches from
+    Pending to the green checkmark.
+
+35. Switch to FS-01 and verify that Folder-1, Folder-2 and Folder-3 are now
+    present in e:\\TailDocs. Create a new folder called Folder-4
+
+36. Switch to FS-02 and click refresh. Note the creation of Folder-4. Create a
+    new folder named Folder-5. Switch to FS-01 and verify that Folder-05
+    appears.
+
 ## Teardown Instructions
 
 To remove the demos from your environment, delete the Resource Group TailTrade-RG.

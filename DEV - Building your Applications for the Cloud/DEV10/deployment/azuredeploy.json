@@ -250,7 +250,7 @@
                         "locationName": "[parameters('location')]"
                     }
                 ],
-                "enableMultipleWriteLocations": true,
+                "enableMultipleWriteLocations": false,
                 "isVirtualNetworkFilterEnabled": false,
                 "virtualNetworkRules": [],
                 "dependsOn": []

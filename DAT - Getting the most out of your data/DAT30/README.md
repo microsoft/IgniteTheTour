@@ -38,7 +38,67 @@ To run demo #3 (Azure Cognitive Services in Containers), you will need Docker in
 ### Installation
 
 * Azure Pipelines Build to build the application (or you could build it manually!)
+  * Fork this repo
+  * Update the values in the `ARM/arm-parameters.json` file for your subscription and resource names. The `webapp_serverFarmResourceGroup` variable will need to match the resource group name you are planning to use to deploy this to.
+  * Create a new [Azure Devops](https://dev.azure.com) project
+  * Create a new Build pipeline pointing to your new repo. This will automatically discover the YAML file and set up the build. Click __RUN__ to create the pipeline and start the build. You will need to wait for this build to finish before you can set up the release pipeline.
 * Azure Pipelines Release to deploy the ARM template, the web app, function app, and database seed scripts (or again, manual if you want).
+  * Create a new release pipeline
+  * Create the first stage as an empty job called _Deploy to Azure_
+  * Add the build as an artifact.
+  * Edit the first stage that was created.
+  * Rename the first job to `Azure resource group`, and set the pool to _Hosted Windows Container_
+    * Add a _Azure Resource Group Deployment_ task to this job.
+      * Set the display name to `Validate Resource Group`
+      * Select your subscription (adding it or authorizing it if required)
+      * Set the resource group name to match the one you used for the `webapp_serverFarmResourceGroup` variable in the `ARM/arm-parameters.json` file, and set the location to one nearest to you.
+      * Set the template and template parameters to the relevant files in the linked artifacts
+      * Set the deployment mode to _Validation only_
+    * Clone this task, and name the clone `Deploy Resource Group`.
+      * Add the following to the override template parameters:
+      
+        `-db_administratorLogin "$(DbAdminUsername)" -db_administratorLoginPassword "$(DbAdminPassword)"`
+      * Set the deployment mode to be _Incremental_
+      * Set the deployment outputs to be `cognitiveKeys`
+  * Add a new agent job to the stage called `Deploy Azure Function`, and set the pool to _Hosted Windows Container_
+    * Add a new _Azure App Service Deploy_ task to this job
+      * Set the version to _4.*_
+      * Set the display name to `Azure App Service Deploy: Function App`
+      * Set the subscription
+      * Set the app service type to _Function app on Linux_
+      * Set the App service name to the `$(FunctionName)` variable
+      * Set the package or folder to be the `function` folder from the build artifacts
+      * Set the runtime stack to be _.NET_
+  * Add a new agent job to the stage called `Deploy Web App`, and set the pool to _Hosted Ubuntu 1604_
+    * Add a new _Azure App Service Deploy_ task to this job
+      * Set the version to _4.*_
+      * Set the display name to `Azure App Service Deploy: Web App`
+      * Set the subscription
+      * Set the app service type to _Web app on Linux_
+      * Set the App service name to the `$(WebAppName)` variable
+      * Set the package or folder to be the `web` folder from the build artifacts
+      * Set the runtime stack to be _.NET Core 2.1_
+      * Set the startup command to be `dotnet lp3s3-comments.dll`
+  * Add a new agent job to the stage called `Seed Database`, and set the pool to _Hosted VS2017_
+    * Add a new _Azure PowerShell_ task to this job
+      * Set the display name to `Azure PowerShell: run SQL`
+      * Set the subscription
+      * Set the script path to the `sql/seed.ps1` file in the build artifacts
+      * Set the script arguments to be:
+      
+        `-dbName $(DbName) -dbAdminPassword $(DbAdminPassword) -serverName $(DbServerName) -workingDir $(System.DefaultWorkingDirectory)/<your repo>`
+        To set the `workingDir` parameter, copy the first two parts of the value from the script path that would have been set when selecting the artifact, up to but not including the `sql` folder.
+      * Set the Azure powershell version to be the latest installed version
+  * Head to the _Variables_ tab and add 4 new pipeline variables by taking values from the ARM template parameters
+    * `DbAdminPassword` - the value of `db_administratorLoginPassword`
+    * `DbAdminUsername` - the value of `db_administratorLogin`
+    * `DbName` - the value of `db_databaseName`
+    * `DbServerName` - the value of `db_serverName`
+    * `FunctionName` - the value of `function_name`
+    * `WebAppName` - the value of `webapp_name`
+  * Add the settings as described above:
+    * The Azure Web App needs an additional Application Setting called `FunctionsKey` with the `_master` value of the Azure function. You'll need to set this manually, because Functions v2 does not make this available programmatically.
+    * The Azure Function needs an additional Application Setting called `customVisionProjectId` with the GUID of the Custom Vision project you're using.
 
 ## Demos
 

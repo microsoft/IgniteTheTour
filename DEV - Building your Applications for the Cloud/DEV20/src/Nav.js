@@ -2,7 +2,7 @@ import React from "react";
 
 const Nav = () => (
   <nav>
-    <h1>TAILWIND TRADERS - Azure Monitor Gates</h1>
+    <h1>TAILWIND TRADERS</h1>
   </nav>
 );
 

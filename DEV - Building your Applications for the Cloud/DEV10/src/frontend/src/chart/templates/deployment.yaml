@@ -31,6 +31,8 @@ spec:
             value: "{{ .Values.externalServices.product }}"
           - name: DISPLAY_SQL_INFO
             value: "{{ .Values.displaySqlInfo }}"
+          - name: CUSTOM_TITLE
+            value: "{{ .Values.customTitle }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
             - name: http

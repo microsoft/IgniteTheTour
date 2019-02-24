@@ -1,0 +1,24 @@
+{
+	"id" : 0,
+	"name" : "This is a test article",
+	"price" : "999.00",
+	"productType" : "Games",
+	"supplierName" : "Azure Advocates",
+	"sku" : "FTDQAYKRHMLQOEYTLXKP",
+	"shortDescription" : "This is a short description",
+	"longDescription" : "Incidunt voluptas totam eum. Nihil nihil minima error rerum qui at enim. Ullam laboriosam tenetur sequi sint rerum ab et nemo. Magni a et culpa provident odio dolorem vel dolores quidem. Est quo aliquid odit aut sit quo est.",
+	"digital" : true,
+	"unitDescription" : "This is the unit description.",
+	"dimensions" : "13ft x 71ft x 15in",
+	"weightInPounds" : 61,
+	"reorder_amount" : 65,
+	"status" : "in-stock",
+	"location" : "Row M, Level 87, Shelf 52, Position 51",
+	"images" : [
+		{
+			"id" : 9999,
+			"caption" : "Test image",
+			"url" : "https://farm2.staticflickr.com/1841/43569825475_a4b92b4a6c_o.png"
+		}
+	]
+}

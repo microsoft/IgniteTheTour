@@ -1,4 +1,4 @@
-# MIG40
+# MIG50
 # -----
 
 all: frontend inventory product
@@ -27,6 +27,9 @@ acrbuild: login
 
 localacrbuild: login
 	@cd src/frontend && ../../scripts/dockeracrpush.sh
+
+acrlist: login
+	@scripts/acr-list.sh
 
 # get connection string for cosmos
 connection:
@@ -147,11 +150,17 @@ setup-helm:
 setup-helm2:
 	@scripts/up/helm2.sh
 
+list-pods:
+	@cd scripts/helm && ./list-pods.sh
+
 helm-watch:
 	kubectl -n kube-system get deploy --watch
 
 helm: helm-frontend helm-inventory helm-product
 helm2: helm-frontend2 helm-inventory2 helm-product2
+
+get-ingresses:
+	@cd scripts/up && ./get-ingresses.sh
 
 delete-helm: delete-helm-frontend delete-helm-inventory delete-helm-product
 
@@ -163,6 +172,9 @@ helm-frontend2:
 
 helm-reinstall-frontend:
 	@cd charts/frontend && ../../scripts/helm/reinstall-frontend.sh
+
+delete-one-helm-frontend:
+	@cd charts/frontend && ../../scripts/helm/delete-one-frontend.sh
 
 delete-helm-frontend:
 	@cd charts/frontend && ../../scripts/helm/delete-frontend.sh
@@ -193,7 +205,6 @@ delete-helm-product:
 
 delete-helm-product2:
 	@cd charts/product-service && ../../scripts/helm/delete-product2.sh
-
 
 kubectl-frontend-logs:
 	kubectl -n frontend logs deploy/frontend-frontend

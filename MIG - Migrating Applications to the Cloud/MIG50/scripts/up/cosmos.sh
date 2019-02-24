@@ -2,7 +2,8 @@
 set -eou pipefail
 source ./scripts/variables.sh
 
-echo create
+echo "Creating CosmosDB $(cosmosname) in resource group $(rg)"
+
 # Create a MongoDB API Cosmos DB account with consistent prefix (Local) consistency and multi-master enabled
 az cosmosdb create \
     --resource-group $(rg) \
