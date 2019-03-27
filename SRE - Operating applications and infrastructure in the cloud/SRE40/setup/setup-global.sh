@@ -261,12 +261,12 @@ az webapp config appsettings set \
     --settings "APPINSIGHTS_INSTRUMENTATIONKEY=${prod_app_insights_key}" \
     -o table &>> 4-setup-apps_global.log
 
-echo "Creating the NodeJS website for the Frontend app. [PRIMARY]"
+echo "Creating the static html website for the Frontend app. [PRIMARY]"
 az webapp create \
     --resource-group $GLOBAL_APP_RG \
     --plan $app_svc_plan_primary \
     --name $front_app_name_primary \
-    --runtime 'node|8.11' \
+    --runtime 'php|7.2'
     -o table &>> 4-setup-apps_global.log
 
 echo "Enabling logging for the Frontend app [PRIMARY]"
@@ -440,12 +440,12 @@ az webapp config appsettings set \
     --settings "APPINSIGHTS_INSTRUMENTATIONKEY=${prod_app_insights_key}" \
     -o table &>> 4-setup-apps_global.log
 
-echo "Creating the NodeJS website for the Frontend app. [SECONDARY]"
+echo "Creating the static html website for the Frontend app. [SECONDARY]"
 az webapp create \
     --resource-group $GLOBAL_APP_RG \
     --plan $app_svc_plan_secondary \
     --name $front_app_name_secondary \
-    --runtime 'node|8.11' \
+    --runtime 'php|7.2' \
     -o table &>> 4-setup-apps_global.log
 
 echo "Enabling logging for the Frontend app [SECONDARY]"

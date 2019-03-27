@@ -4,17 +4,17 @@ set -eo pipefail
 ## Common Parameters
 LEARNING_PATH="SRE"
 SESSION_NUMBER="30"
-CITY="berlin"
+CITY="REPLACE_WITH_DEMO_CITY"
 APP_ENVIRONMENT="prod"
 SUBSCRIPTION="Ignite the Tour"
-LOCATION="westeurope"
+LOCATION="REPLACE_WITH_DEMO_REGION"
 
 ## Resource Group Names
 APP_RG="${LEARNING_PATH}${SESSION_NUMBER}-app-${CITY}-${APP_ENVIRONMENT}"
 DB_RG="${LEARNING_PATH}${SESSION_NUMBER}-db-${CITY}-${APP_ENVIRONMENT}"
 
 ## SQL and Cosmos Database settings
-SERVERNAME="tw-sql${SESSION_NUMBER}-${APP_ENVIRONMENT}"
+SERVERNAME="tw-sql${SESSION_NUMBER}-${CITY}-${APP_ENVIRONMENT}"
 DBUSER="admin${LEARNING_PATH}${SESSION_NUMBER}"
 if [ -a "$PWD/.dbpass" ]
 then
@@ -24,7 +24,7 @@ else
       echo $DBPASS > .dbpass
 fi
 DATABASENAME='tailwind' 
-COSMOSACCOUNTNAME="twmongo${SESSION_NUMBER}${APP_ENVIRONMENT}"
+COSMOSACCOUNTNAME="twmongo${SESSION_NUMBER}${CITY}${APP_ENVIRONMENT}"
 NUMBER_OF_ITEMS=100
 
 ### separate locations for CosmosDB instances, should be distinct

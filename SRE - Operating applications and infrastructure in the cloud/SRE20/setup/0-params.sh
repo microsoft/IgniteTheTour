@@ -4,10 +4,10 @@ set -eo pipefail
 ## Common Parameters
 LEARNING_PATH="SRE"
 SESSION_NUMBER="20"
-CITY="singapore"
+CITY="REPLACE_WITH_DEMO_CITY"
 APP_ENVIRONMENT="prod"
 SUBSCRIPTION="Ignite the Tour"
-LOCATION="westeurope"
+LOCATION="REPLACE_WITH_DEMO_REGION"
 
 ## Resource Group Names
 APP_RG="${LEARNING_PATH}${SESSION_NUMBER}-app-${CITY}-${APP_ENVIRONMENT}"
