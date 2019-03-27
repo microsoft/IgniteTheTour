@@ -219,12 +219,12 @@ az webapp config appsettings set \
     --settings "APPINSIGHTS_INSTRUMENTATIONKEY=${prod_app_insights_key}" \
     -o table &>> 4-setup-apps.log
 
-echo "Creating the NodeJS website for the Frontend app."
+echo "Creating the static html website for the Frontend app."
 az webapp create \
     --resource-group $APP_RG \
     --plan $app_svc_plan \
     --name $front_app_name \
-    --runtime 'node|8.11' \
+    --runtime 'php|7.2' \
     -o table &>> 4-setup-apps.log
 
 echo "Enabling logging for the Frontend app"
