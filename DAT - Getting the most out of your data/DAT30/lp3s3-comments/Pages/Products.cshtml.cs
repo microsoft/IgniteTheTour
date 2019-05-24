@@ -15,38 +15,36 @@ namespace lp3s3_comments.Pages
     {
         public IEnumerable<Product> Products;
         private readonly IConfiguration config;
+        private readonly IHttpClientFactory httpClientFactory;
 
         [BindProperty]
         public int ProductId { get; set; }
 
-        public ProductsModel(TailwindContext context, IConfiguration config)
+        public ProductsModel(TailwindContext context, IConfiguration config, IHttpClientFactory httpClientFactory)
         {
             Db = context;
             this.config = config;
+            this.httpClientFactory = httpClientFactory;
         }
 
         private TailwindContext Db { get; }
 
-        public void OnGet()
+        public async Task OnGetAsync()
         {
             // return the products
-            Products = Db.Products.OrderBy(p => p.AverageSentiment ?? 0).ToList();
+            Products = await Db.Products.OrderBy(p => p.AverageSentiment ?? 0).ToListAsync();
         }
 
-        public IActionResult OnPost()
+        public async Task<IActionResult> OnPostAsync()
         {
             if (ProductId > 0)
             {
-                using (var client = new HttpClient()
-                {
-                    BaseAddress = new Uri(config["FunctionsUrl"])
-                })
-                {
-                    var functionKey = config["FunctionsKey"];
+                var client = httpClientFactory.CreateClient("functions");
 
-                    // wait for response, but don't use it, we'll refresh the page
-                    var response = client.GetAsync($"api/GetProductImageTags?ProductId={ProductId}&code={functionKey}").Result;
-                }
+                var functionKey = config["FunctionsKey"];
+
+                // wait for response, but don't use it, we'll refresh the page
+                var response = await client.GetAsync($"api/GetProductImageTags?ProductId={ProductId}&code={functionKey}");
             }
             return new RedirectToPageResult("Products");
         }

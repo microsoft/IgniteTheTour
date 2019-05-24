@@ -15,38 +15,36 @@ namespace lp3s3_comments.Pages
     {
         public IEnumerable<ExtendedComment> Comments;
         private readonly IConfiguration config;
+        private readonly IHttpClientFactory httpClientFactory;
 
         [BindProperty]
         public int GetAnalysisCommentId { get; set; }
 
-        public ExtendedModel(TailwindContext context, IConfiguration config)
+        public ExtendedModel(TailwindContext context, IConfiguration config, IHttpClientFactory httpClientFactory)
         {
             Db = context;
             this.config = config;
+            this.httpClientFactory = httpClientFactory;
         }
 
         private TailwindContext Db { get; }
 
-        public void OnGet()
+        public async Task OnGetAsync()
         {
             // return the comments
-            Comments = ExtendedComment.FromDb(Db.Comments.ToList(), Db.CommentAnalyses.ToList());
+            Comments = ExtendedComment.FromDb(await Db.Comments.ToListAsync(), await Db.CommentAnalyses.ToListAsync());
         }
 
-        public IActionResult OnPost()
+        public async Task<IActionResult> OnPostAsync()
         {
             if (GetAnalysisCommentId > 0)
             {
-                using (var client = new HttpClient()
-                {
-                    BaseAddress = new Uri(config["FunctionsUrl"])
-                })
-                {
-                    var functionKey = config["FunctionsKey"];
+                var client = httpClientFactory.CreateClient("functions");
 
-                    // wait for response, but don't use it, we'll refresh the page
-                    var response = client.GetAsync($"api/GetCommentAnalysis?CommentId={GetAnalysisCommentId}&code={functionKey}").Result;
-                }
+                var functionKey = config["FunctionsKey"];
+
+                // wait for response, but don't use it, we'll refresh the page
+                var response = await client.GetAsync($"api/GetCommentAnalysis?CommentId={GetAnalysisCommentId}&code={functionKey}");
             }
             return new RedirectToPageResult("Extended");
         }
