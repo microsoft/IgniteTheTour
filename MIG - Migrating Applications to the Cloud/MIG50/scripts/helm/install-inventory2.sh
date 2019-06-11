@@ -9,8 +9,7 @@ fi
 DBCS=$(az keyvault secret show --vault-name $(akvname) --name web2-db-connection --query value -o tsv)
 echo -n $DBCS > tmp.txt
 
-prompt helm install \
---name inventory \
+prompt helm upgrade inventory --install \
 --namespace default \
 --set image.registry="$(acrname).azurecr.io",applicationroutingzone=$(routingzone2) \
 --set-file connectionstring=tmp.txt \

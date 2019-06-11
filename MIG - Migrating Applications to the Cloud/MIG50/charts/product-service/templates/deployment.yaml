@@ -8,8 +8,9 @@ metadata:
     release: "{{ .Release.Name }}"
     heritage: "{{ .Release.Service }}"
 spec:
-  
   replicas: {{ .Values.replicaCount }}
+  strategy:
+    type: RollingUpdate
   template:
     metadata:
       labels:

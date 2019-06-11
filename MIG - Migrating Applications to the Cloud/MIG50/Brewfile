@@ -1,0 +1,10 @@
+cask_args appdir: '/Applications'
+
+tap 'azure/functions'
+
+brew 'azure-functions-core-tools'
+brew 'azure-cli'
+brew 'kubectx'
+brew 'jq'
+brew 'mongo'
+brew 'postgresql'

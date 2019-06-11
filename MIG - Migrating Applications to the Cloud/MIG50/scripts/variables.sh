@@ -1,16 +1,17 @@
 #!/bin/bash
 #set -eou pipefail
 
-BASE=mig50a
+BASE=mig50a19
 PRESENTER=`az account show | jq .user.name | sed 's/^"\([^@]*\)@.*.com"$/\1/'`
 LOCATION=eastus
 LOCATION2=westus2
-SUB='Ignite the Tour'
+SUB='The Ignite Tour'
 DB_BASE=tailwind
 PG_HOST_BASE=".postgres.database.azure.com"
 PG_USER_BASE=tuser
 PG_PASS='asdf1234)(*&^)'
 COLLECTION=inventory
+KUBERNETESVERSION=1.13.5
 CLUSTER_NAME=mig50
 NODECOUNT=3
 
@@ -113,6 +114,11 @@ function collection()
 {
     local collection=$COLLECTION
     echo "$collection"
+}
+function kubernetesversion()
+{
+    local kubernetesversion=$KUBERNETESVERSION
+    echo "$kubernetesversion"
 }
 function akvname()
 {
@@ -217,6 +223,11 @@ function fdaddress()
     local fdaddress=$(rg).azurefd.net
     echo "$fdaddress"
 }
+# function revisionId(){
+#     local revisionId=$(helm ls --output json | jq -r '.Releases[0].Revision')
+#     echo "$revisionId"
+# }
+
 # tests below
 #echo Base: $(base)
 #echo Presenter: $(presenter)
