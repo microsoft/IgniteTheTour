@@ -3,13 +3,13 @@
     "contentVersion": "1.0.0.0",
     "parameters": {
         "name": {
-            "value": "SRE10-berlin-templatedeploy"
+            "value": "SRE10-stockholm-templatedeploy"
         },
         "linuxFxVersion": {
             "value": "NODE|8.11"
         },
         "hostingPlanName": {
-            "value": "SRE10-berlin-templatedeploy"
+            "value": "SRE10-stockholm-templatedeploy"
         },
         "hostingEnvironment": {
             "value": ""
@@ -27,7 +27,7 @@
             "value": "3"
         },
         "serverFarmResourceGroup": {
-            "value": "SRE10-berlin-templatedeploy"
+            "value": "SRE10-stockholm-templatedeploy"
         },
         "subscriptionId": {
             "value": "cd400f31-6f94-40ab-863a-673192a3c0d0"

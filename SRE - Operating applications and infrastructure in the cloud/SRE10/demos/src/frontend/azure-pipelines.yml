@@ -7,7 +7,7 @@ pool:
   vmImage: 'Ubuntu 16.04'
 
 variables:
-  CITY: 'berlin'
+  CITY: 'stockholm'
   LEARNING_PATH: 'SRE'
   SESSION_NUMBER: '10'
 

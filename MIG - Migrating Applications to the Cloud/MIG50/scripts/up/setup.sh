@@ -2,6 +2,16 @@
 set -eou pipefail
 source ./scripts/variables.sh
 
+echo "This script will now setup the following resources in the $(subscription): "
+echo ''
+echo "Resource Group $(rg) in $(location)"
+echo "Resource Group $(rg2) in $(location2)"
+echo "$(acrname) Azure Container Registry in the $(rg) resource group"
+echo "$(cosmosname) Cosmos DB in the $(rg) resource group"
+echo "$(akvname) Azure Key Vault in the $(rg) resource group"
+
+az account set --subscription "$(subscription)"
+
 # resource group
 scripts/up/rg.sh
 scripts/up/rg2.sh

@@ -6,15 +6,23 @@ docker: docker-frontend docker-inventory docker-product
 
 allup: setup secrets setup-kubernetes
 
+demo: setup secrets kubeconfig setup-kubernetes setup-kubernetes2 acrbuild helm helm2 setup-fd 
+
+reset-demo: helm-frontend2
+	cd charts/frontend && rm rev2.txt 
+
 # Demo Tasks
 setup:
-	@scripts/subscription.sh
-	@scripts/up/setup.sh
-	@scripts/mongorestore.sh > /dev/null 2>&1
-	@scripts/pgload.sh
+	-@scripts/subscription.sh
+	-@scripts/up/setup.sh
+	-@scripts/mongorestore.sh > /dev/null 2>&1
+	-@scripts/pgload.sh
+
+kubeconfig:
+	export KUBECONFIG=~/.kube/config
 
 setup-cosmos:
-	@scripts/up/cosmos.sh
+	-@scripts/up/cosmos.sh
 	
 # login to ACR
 login:
@@ -55,9 +63,10 @@ mongorestore-verbose:
 
 # tear it all down
 teardown:
-	@scripts/subscription.sh
-	@scripts/down/teardown.sh
-	@scripts/down/funcdown.sh
+	-@scripts/subscription.sh
+	-@scripts/down/teardown.sh
+	-@scripts/down/funcdown.sh
+	-@scripts/down/aks-cleanup.sh
 
 teardown-rg:
 	@scripts/subscription.sh
@@ -121,12 +130,10 @@ acrbuild-aks-inventory:
 acrbuild-aks-product:
 	@cd src/product-service && ../../scripts/dockerproduct-aks.sh
 
-
 # for setting up a new resource group for a new AKS
 rg-aks:
 	@scripts/up/rg-aks.sh
 
-# not used at present
 setup-kubernetes: setup-aks setup-kubectl setup-helm
 setup-kubernetes2: setup-aks2 setup-kubectl2 setup-helm2
 
@@ -135,8 +142,8 @@ setup-aks:
 	@scripts/up/aks.sh
 
 setup-aks2:
-	@scripts/up/rg2.sh
-	@scripts/up/aks2.sh
+	-@scripts/up/rg2.sh
+	-@scripts/up/aks2.sh
 
 setup-kubectl:
 	@scripts/up/kubectl.sh
@@ -173,14 +180,17 @@ helm-frontend2:
 helm-reinstall-frontend:
 	@cd charts/frontend && ../../scripts/helm/reinstall-frontend.sh
 
+helm-rollback-frontend:
+	@cd charts/frontend && ../../scripts/helm/rollback-frontend.sh
+
 delete-one-helm-frontend:
 	@cd charts/frontend && ../../scripts/helm/delete-one-frontend.sh
 
 delete-helm-frontend:
-	@cd charts/frontend && ../../scripts/helm/delete-frontend.sh
+	-@cd charts/frontend && ../../scripts/helm/delete-frontend.sh
 
 delete-helm-frontend2:
-	@cd charts/frontend && ../../scripts/helm/delete-frontend2.sh
+	-@cd charts/frontend && ../../scripts/helm/delete-frontend2.sh
 
 helm-inventory:
 	@cd charts/inventory-service && ../../scripts/helm/install-inventory.sh

@@ -9,5 +9,5 @@ source ./scripts/variables.sh
 az aks get-credentials \
 --resource-group $(rg) \
 --name $(clustername) \
---file .kubeconfig \
+--file ~/.kube/config \
 --overwrite-existing
