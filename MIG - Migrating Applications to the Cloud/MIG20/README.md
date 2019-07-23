@@ -21,8 +21,8 @@ The best way to deploy is to clone the repository into the Azure Cloud Shell. Th
 ### Azure Setup Instructions
 
 1. Open up the Azure Portal and start a new Cloud Shell session
-1. Clone this repository: `git clone https://github.com/azure-samples/ignite-tour/lp1s1`
-1. Change into the `setup` directory: `cd setup`
+1. Clone this repository: `git clone git clone https://github.com/microsoft/IgniteTheTour.git`
+1. Change into the `DEV - Building your Applications for the Cloud/DEV10/deployment` directory
 1. Run the `deploy.sh` script: `./deploy.sh`
 
 The `deploy.sh` script will prompt you for the following information:

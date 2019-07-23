@@ -1,4 +1,4 @@
-**NOTE:** This repo uses the same code as [DEV10](), so you should clone the source from [that repo](). Read down on this page for a little more info on how to setup the project in DEV10 for this session.
+**NOTE:** This repo uses the same code as [DEV10](https://github.com/microsoft/IgniteTheTour/tree/master/DEV%20-%20Building%20your%20Applications%20for%20the%20Cloud/DEV10), so you should clone the source from [that repo](https://github.com/microsoft/IgniteTheTour). Read down on this page for a little more info on how to setup the project in DEV10 for this session.
 
 # Migrating Web Applications To Azure
 _This project uses the exact same assets as DEV10. It focuses on deploying those assets to Azure with Azure Container Registry and Azure Web Apps for Containers._ 
@@ -78,6 +78,35 @@ Deploy 3 web-based applications (2 API's, one front end) to Azure Web Apps for C
   1. Click "Apply" and then "Create" on the previous screen to finish creating the web app. View the "Overview" tab to get the URL to your service.
 
   1. Repeat these steps for both the products-service and inventory-service.
+
+
+### Create Envrionment Variables
+
+  1. Add SQL Server connection string to inventory-service, go to App Service for inventory-service.  
+
+    * Select "Application Settings." Scroll down to "Connection Strings" and create new connections string with 
+    * CONNECTION STRING NAME "InventoryContext", 
+    * the VALUE is the full connection string, "Server=tcp:server-example-sqldb.database.windows.net,1433;Initial Catalog=example-example-sqldb;Persist Security Info=False;User ID=example;Password=example;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30" and TYPE "SQLAzure"
+
+Save these Settings, move on to product-service App-Service.  
+
+Select "Application Settings." Scroll down to "Application setting and create the following APP SETTING NAME and VALUE for your app:
+    
+    * DB_CONNECTION_STRING, ```mongodb://example-northwind:Ywk16bEy0yNMdOI4NMqvEVENT1najbzq0Iam6R3SpsDyOL2exE9Yx0UlL4mmOrard8GZrkN2lDkahpuaxBqeEQ==@tailwind-northwind.documents.azure.com:10255/tailwind?ssl=true&replicaSet=globaldb```
+        * SEED_DATA, true
+Save and then create frontend variables, these are the https urls of the product-service and inventory-service.
+  
+  * Select "Application Settings." Scroll down to "Application setting and create the following APP SETTING NAME and VALUE for your app:
+    * INVENTORY_SERVICE_BASE_URL, https://twt-inventory-api.azurewebsites.net/
+    * PRODUCT_SERVICE_BASE_URL, https://twt-product-api.azurewebsites.net/
+
+
+View the application with the URL of the frontend serivce https url, EXAMPLE: https://twt-frontend-prod.azurewebsites.net
+
+## Learn More/Resources
+
+* [Use a custom Docker image for Web App for Containers](https://docs.microsoft.com/en-us/azure/app-service/containers/tutorial-custom-docker-image?WT.mc_id=ignitetour-github-mig10)
+
 
 ## Learn More/Resources
 
