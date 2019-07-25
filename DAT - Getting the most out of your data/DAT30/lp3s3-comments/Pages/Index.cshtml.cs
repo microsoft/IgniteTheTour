@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using lp3s3_comments.Database;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.EntityFrameworkCore;
 
 namespace lp3s3_comments.Pages
 {
@@ -19,10 +20,10 @@ namespace lp3s3_comments.Pages
 
         private TailwindContext Db { get; }
 
-        public void OnGet()
+        public async Task OnGetAsync()
         {
             // return the comments
-            Comments = Db.Comments.ToList();
+            Comments = await Db.Comments.ToListAsync();
         }
     }
 }

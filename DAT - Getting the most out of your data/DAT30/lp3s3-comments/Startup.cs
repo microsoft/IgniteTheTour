@@ -36,6 +36,9 @@ namespace lp3s3_comments
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
+            services.AddHttpClient("functions", c => {
+                c.BaseAddress =  new Uri(Configuration["FunctionsUrl"]);
+            });
             
             services.AddDbContext<TailwindContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("Tailwind")));
