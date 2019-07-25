@@ -39,7 +39,38 @@ There is an automated script that will deploy a resource group, plus the Fronten
 
 #### Deployment
 
+Set three environment variables: 
+
+RESOURCE_GROUP_NAME
+
+RESOURCE_PREFIX
+
+SQL_ADMIN_PASSWORD
+
+
 Change into the `deployment` directory and run `deploy.sh`.
+
+##### Deployment Tips
+
+-Review the [minimum password requirements](https://docs.microsoft.com/en-us/sql/relational-databases/security/password-policy?view=sql-server-2017) for SQL_ADMIN_PASSWORD 
+
+-For best results, run the deployment script from Azure cloud shell:
+
+Go to https://shell.azure.com/
+type 
+`git clone https://github.com/microsoft/IgniteTheTour.git`
+
+Navigate to the `/DEV - Building your Applications for the Cloud/DEV10/deployment` directory (Type `code .` to see the directory structure)
+Type `./deploy.sh`
+
+If you get this message:
+
+`$'\r': command not found`
+
+Run this command to convert carriage returns:
+ 
+`sed -i 's/\r$//' deploy.sh`
+
 
 
 ## Train the Trainer content
