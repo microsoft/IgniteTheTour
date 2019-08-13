@@ -59,13 +59,13 @@ printf "\n*** Creating the necessary Mongo VM NSGs ***\n"
 az network nsg rule create -n MongoDB --nsg-name "${MONGO_VM_NAME}NSG" -g $RESOURCE_GROUP_NAME --access Allow --direction Inbound --priority 500 --source-address-prefixes AzureCloud --destination-port-ranges 27017
 
 printf "\n*** Cloning into DEV10: Designing Resilient Cloud Applications repository ***\n"
-git clone https://github.com/Azure-Samples/ignite-tour-lp1s1.git
+git clone https://github.com/microsoft/IgniteTheTour.git
 
 printf "\n*** Deploying the App Services and Cosmos DB ***\n"
 
 az group deployment create -g $RESOURCE_GROUP_NAME --template-file appservicedeploy.json --parameters prefix=$RESOURCE_PREFIX location=$MAIN_REGION sqlVMIPAddress=$SQL2012_VM_IP_ADDRESS sqlAdminLogin=$USERNAME sqlAdminPassword=$PASSWORD
 
-cd ignite-tour-lp1s1/deployment
+cd "IgniteTheTour/DEV - Building your Applications for the Cloud/DEV10/deployment"
 
 printf "\n*** Building Product Service image in ACR ***\n"
 az acr build -t $PRODUCT_SERVICE_IMAGE -r $REGISTRY_NAME ../src/product-service
