@@ -114,12 +114,11 @@ az webapp config appsettings set -n $FRONTEND_NAME -g $RESOURCE_GROUP_NAME --set
 FRONTEND_BASE_URL="http://$(az webapp show -n $FRONTEND_NAME -g $RESOURCE_GROUP_NAME --query defaultHostName -o tsv)/"
 
 # Finished with app service, go back to top level directory
-cd ..
-cd ..
+cd ..\..\..\..
 
 pwd
 
-rm -rf ignite-tour-lp1s1
+rm -rf IgniteTheTour
 
 printf "\n\n*** Creating the SQL Manage Instance virtual network***\n\n"
 az network vnet create -g $RESOURCE_GROUP_NAME -n $SQL_MI_VNET_NAME \
@@ -191,9 +190,9 @@ printf "Product service url: $PRODUCT_SERVICE_BASE_URL\n"
 # printf "Inventory service url: $INVENTORY_SERVICE_BASE_URL\n"
 printf "Cosmos connection string: $COSMOSDB_CONNECTION_STRING\n"
 printf "MongoDB VM connection string: $MONGODB_CONNECTION_STRING\n"
-printf "SQL VM IP address: $SQL2012_VM_IP_ADDRESS"
-printf "Inventory service VM url: http://${INVENTORY_VM_IP_FQDN}:8080"
-printf "MongoDB VM IP address: $MONGO_IP_ADDRESS"
+printf "SQL VM IP address: $SQL2012_VM_IP_ADDRESS\n"
+printf "Inventory service VM url: http://${INVENTORY_VM_IP_FQDN}:8080\n"
+printf "MongoDB VM IP address: $MONGO_IP_ADDRESS\n"
 printf "\n\n *** All the other info will be found in the portal under the resource group ***\n\n"
 
 printf "\n******************************************************\n"
