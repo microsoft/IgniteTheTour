@@ -1,12 +1,33 @@
+echo ""
+echo "Welcome to Tailwind Traders Data Migration!!"
+echo ""
+echo "******"
+echo "- Use the Subscription ID for Subscription."
+echo "- Get list of available Azure Regions using 'az account list-locations' - use the 'name' property."
+echo "- You can use an existing Resource Group if you like."
+echo "******"
+echo ""
+
+if [ -d "original" ]
+then
+    echo "Restoring original scripts and configs"
+    cp original/* .
+else
+    echo "Backing up original scripts and configs"
+    mkdir original
+    cp *.sh original
+    cp *.json original
+fi
+
+echo ""
+
 read -p 'Subscription to use: ' SUBSCRIPTION
-read -p 'New resource group name: ' RESOURCE_GROUP_NAME
+read -p 'Azure Region name to use: ' AZURE_REGION
+read -p 'Resource group name: ' RESOURCE_GROUP_NAME
 read -p 'Unique prefix (applied to all resources): ' RESOURCE_PREFIX
 read -p 'Username (applied to all resources): ' USERNAME
 read -sp 'Password (applied to all resources - no exclamation points): ' PASSWORD
 
-echo ""
-
-echo "Welcome to Tailwind Traders Data Migration!!"
 
 REGISTRY_NAME="$RESOURCE_PREFIX"registry
 PRODUCT_SERVICE_NAME="$RESOURCE_PREFIX"product
@@ -25,7 +46,7 @@ PRODUCT_SERVICE_IMAGE='tailwind-product-service:0.1'
 INVENTORY_SERVICE_IMAGE='tailwind-inventory-service:0.1'
 FRONTEND_IMAGE='tailwind-frontend:0.1'
 
-MAIN_REGION=eastus
+MAIN_REGION="$AZURE_REGION"
 
 printf "\n*** Setting the subsription to $SUBSCRIPTION***\n"
 az account set --subscription "$SUBSCRIPTION"
