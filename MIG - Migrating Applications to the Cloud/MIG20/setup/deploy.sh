@@ -23,13 +23,13 @@ echo ""
 
 read -p 'Subscription to use: ' SUBSCRIPTION
 read -p 'Azure Region name to use: ' AZURE_REGION
-read -p 'Resource group name: ' RESOURCE_GROUP_NAME
 read -p 'Unique prefix (applied to all resources): ' RESOURCE_PREFIX
 read -p 'Username (applied to all resources): ' USERNAME
 read -sp 'Password (applied to all resources - no exclamation points): ' PASSWORD
 
 
 REGISTRY_NAME="$RESOURCE_PREFIX"registry
+RESOURCE_GROUP_NAME="$RESOURCE_PREFIX"-datamig-demo
 PRODUCT_SERVICE_NAME="$RESOURCE_PREFIX"product
 INVENTORY_SERVICE_NAME="$RESOURCE_PREFIX"inventory
 INVENTORY_SERVICE_VM_NAME="$INVENTORY_SERVICE_NAME"vm
