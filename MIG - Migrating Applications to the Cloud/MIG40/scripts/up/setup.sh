@@ -3,6 +3,15 @@ set -eou pipefail
 source ./scripts/variables.sh
 PG_CONNECTION="$(funcpgconnection)"
 
+if [ -z "$SENDGRID_API_KEY" ]; then
+    echo "\$SENDGRID_API_KEY and \$SENDGRID_TEMPLATE_ID must be set"
+    exit
+fi
+if [ -z "$SENDGRID_TEMPLATE_ID" ]; then
+    echo "\$SENDGRID_API_KEY and \$SENDGRID_TEMPLATE_ID must be set"
+    exit
+fi
+
 # create src/reports/local.settings.json
 if [ -f "src/reports/local.settings.json" ]; then
     echo "local.settings.json found, skipping generation"
@@ -103,6 +112,7 @@ scripts/up/cosmos.sh
 
 # key-vault
 scripts/up/vault.sh
+scripts/up/secrets.sh
 
 # functions
 scripts/up/funcsetup.sh
