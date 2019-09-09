@@ -1,17 +1,17 @@
 #!/bin/bash
 #set -eou pipefail
 
-BASE=mig50a19
+BASE=mig50
 PRESENTER=`az account show | jq .user.name | sed 's/^"\([^@]*\)@.*.com"$/\1/'`
 LOCATION=eastus
 LOCATION2=westus2
-SUB='The Ignite Tour'
+SUB='Ignite the Tour'
 DB_BASE=tailwind
 PG_HOST_BASE=".postgres.database.azure.com"
 PG_USER_BASE=tuser
 PG_PASS='asdf1234)(*&^)'
 COLLECTION=inventory
-KUBERNETESVERSION=1.13.5
+KUBERNETESVERSION=1.14.6
 CLUSTER_NAME=mig50
 NODECOUNT=3
 
