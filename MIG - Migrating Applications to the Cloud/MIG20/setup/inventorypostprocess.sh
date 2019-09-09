@@ -1,0 +1,1 @@
+ssh -o StrictHostKeyChecking=no azureuser@INVENTORY_VM_IP_ADDRESS 'bash -s' < inventoryvmconfigure.sh
