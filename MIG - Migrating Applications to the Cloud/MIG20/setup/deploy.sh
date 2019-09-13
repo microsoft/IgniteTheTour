@@ -4,7 +4,9 @@ read -p 'Unique prefix (all lowercase - applied to all resources): ' RESOURCE_PR
 read -p 'Username (applied to all resources): ' USERNAME
 
 echo ""
+read -sp 'Password (applied to all resources that need password): ' PASSWORD
 
+echo ""
 read -sp 'Password for Azure SQL - must be strong: ' AZURESQLPASS
 
 echo "Welcome to Tailwind Traders Data Migration!!"
@@ -37,7 +39,7 @@ az group create -n $RESOURCE_GROUP_NAME -l $MAIN_REGION
 
 printf "\n*** Creating the SQL Server 2012 Virtual Machine (can take 20 minutes) ***\n"
 az group deployment create -g $RESOURCE_GROUP_NAME --template-file sqlvmdeploy.json \
-    --parameters adminUsername=$USERNAME adminPassword=$PASSWORD sqlAuthenticationPassword=$PASSWORD sqlAuthenticationLogin=$USERNAME virtualMachineName=$SQL2012_VM_NAME
+    --parameters adminUsername=$USERNAME adminPassword=$PASSWORD sqlAuthenticationPassword=$AZURESQLPASS sqlAuthenticationLogin=$USERNAME virtualMachineName=$SQL2012_VM_NAME
 
 SQL2012_VM_IP_ADDRESS=$(az vm list-ip-addresses -g $RESOURCE_GROUP_NAME -n $SQL2012_VM_NAME | jq -r '.[0].virtualMachine.network.publicIpAddresses[0].ipAddress')
 
