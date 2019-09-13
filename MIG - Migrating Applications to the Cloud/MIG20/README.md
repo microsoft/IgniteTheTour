@@ -181,7 +181,8 @@ mongorestore \
 ```
 8. Switch the connection string to the Product Service website, so go back out to the overall Resources view and click on `<RESOURCEPREVIX>product` app service. (The `<RESOURCEPREFIX>` is the value you set during installation.)
 9.Click on `Application Settings` from the right hand menu.
-10. Enter the Cosmos DB `Primary Connection String` copied above into the _value_ portion for `DB_CONNECTION_STRING`. This is located in the `Application Settings` section.
+10. Enter the Cosmos DB `Primary Connection String` copied above into the _value_ portion for `DB_CONNECTION_STRING`. This is located in the `Application Settings` section. Don't forget to add the 'tailwind' database name to the path of the connection string, just before the query string.  
+At the end the result should look like `mongodb://COSMOSDB_ACCOUNT_NAME:COSMOSDB_PASSWORD@COSMOSDB_HOSTNAME:10255/tailwind?ssl=true&replicaSet=globaldb`
 ![product service db connection string value](images/DB_CONNECTION_STRING.png)
 11. The Product Descriptions are now coming from Cosmos DB - so let's prove that it's working by adding an item.
 12. Go into your Azure Cosmos DB account and click on `Data Explorer`. Select the `tailwind` database.
