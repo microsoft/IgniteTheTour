@@ -1,5 +1,6 @@
 read -p 'Subscription to use: ' SUBSCRIPTION
 read -p 'New resource group name: ' RESOURCE_GROUP_NAME
+read -p 'Azure Region: ' MAIN_REGION
 read -p 'Unique prefix (all lowercase - applied to all resources): ' RESOURCE_PREFIX
 read -p 'Username (applied to all resources): ' USERNAME
 
@@ -29,7 +30,8 @@ PRODUCT_SERVICE_IMAGE='tailwind-product-service:0.1'
 INVENTORY_SERVICE_IMAGE='tailwind-inventory-service:0.1'
 FRONTEND_IMAGE='tailwind-frontend:0.1'
 
-MAIN_REGION=eastus
+# Azure Region is an input.
+#MAIN_REGION=eastus
 
 printf "\n*** Setting the subsription to $SUBSCRIPTION***\n"
 az account set --subscription "$SUBSCRIPTION"
