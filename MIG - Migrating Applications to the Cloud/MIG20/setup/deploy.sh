@@ -174,7 +174,8 @@ printf "\n\n *** Configuring the post-processing Inventory VM script ***\n\n"
 echo "ACR_USERNAME = $ACR_USERNAME"
 sed -i -e "s/REPLACE_CONTAINER_REGISTRY_USERNAME/${ACR_USERNAME}/g" inventoryvmconfigure.sh 
 echo "ACR_PASSWORD = $ACR_PASSWORD"
-sed -i -e "s/REPLACE_CONTAINER_REGISTRY_PASSWORD/${ACR_PASSWORD}/g" inventoryvmconfigure.sh
+# Sometimes you have slash within the password...
+sed -i -e "s;REPLACE_CONTAINER_REGISTRY_PASSWORD;${ACR_PASSWORD};g" inventoryvmconfigure.sh
 echo "ACR_SERVER = $ACR_SERVER"
 sed -i -e "s/REPLACE_CONTAINER_REGISTRY_SERVER/${ACR_SERVER}/g" inventoryvmconfigure.sh
 echo "INVENTORY_SERVICE_IMAGE = $INVENTORY_SERVICE_IMAGE"
