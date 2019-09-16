@@ -37,7 +37,7 @@ az group create -n $RESOURCE_GROUP_NAME -l $MAIN_REGION
 
 printf "\n*** Creating the SQL Server 2012 Virtual Machine (can take 20 minutes) ***\n"
 az group deployment create -g $RESOURCE_GROUP_NAME --template-file sqlvmdeploy.json \
-    --parameters adminUsername=$USERNAME adminPassword=$PASSWORD sqlAuthenticationPassword=$PASSWORD sqlAuthenticationLogin=$USERNAME virtualMachineName=$SQL2012_VM_NAME
+    --parameters adminUsername=$USERNAME adminPassword=$AZURESQLPASS sqlAuthenticationPassword=$AZURESQLPASS sqlAuthenticationLogin=$USERNAME virtualMachineName=$SQL2012_VM_NAME
 
 SQL2012_VM_IP_ADDRESS=$(az vm list-ip-addresses -g $RESOURCE_GROUP_NAME -n $SQL2012_VM_NAME | jq -r '.[0].virtualMachine.network.publicIpAddresses[0].ipAddress')
 
@@ -133,6 +133,9 @@ az network vnet create -g $RESOURCE_GROUP_NAME -n $SQL_MI_VNET_NAME \
     --address-prefix 10.0.0.0/16 \
     --subnet-name $SQL_MI_SUBNET_NAME \
     --subnet-prefix 10.0.0.0/24
+
+az sql mi create -g $RESOURCE_GROUP_NAME -n $SQL_MI_NAME -l $MAIN_REGION -i -u $USERNAME -p $AZURESQLPASS --vnet-name $SQL_MI_VNET_NAME --subnet $SQL_MI_SUBNET_NAME
+
 
 SQL_DMS_SUBNET_NAME=dms
 
