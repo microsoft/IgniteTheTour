@@ -83,13 +83,13 @@ cd ignite-tour-lp1s1/deployment
 # cd '../../../DEV - Building your Applications for the Cloud/DEV10/deployment'
 
 printf "\n*** Building Inventory Service image in ACR ***\n"
-az acr build -t $INVENTORY_SERVICE_IMAGE -r $REGISTRY_NAME ../src/inventory-service/InventoryService.Api
+az acr build -g $RESOURCE_GROUP_NAME -t $INVENTORY_SERVICE_IMAGE -r $REGISTRY_NAME ../src/inventory-service/InventoryService.Api
 
 printf "\n*** Building Product Service image in ACR ***\n"
-az acr build -t $PRODUCT_SERVICE_IMAGE -r $REGISTRY_NAME ../src/product-service
+az acr build -g $RESOURCE_GROUP_NAME -t $PRODUCT_SERVICE_IMAGE -r $REGISTRY_NAME ../src/product-service
 
 printf "\n\n*** Building Frontend image in ACR ***\n"
-az acr build -t $FRONTEND_IMAGE -r $REGISTRY_NAME ../src/frontend
+az acr build -g $RESOURCE_GROUP_NAME -t $FRONTEND_IMAGE -r $REGISTRY_NAME ../src/frontend
 
 printf "\n\n*** Retrieving ACR information ***\n"
 ACR_SERVER=$(az acr show -n $REGISTRY_NAME --query loginServer -o tsv)
