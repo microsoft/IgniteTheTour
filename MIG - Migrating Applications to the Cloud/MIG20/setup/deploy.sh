@@ -92,9 +92,9 @@ printf "\n\n*** Building Frontend image in ACR ***\n"
 az acr build -g $RESOURCE_GROUP_NAME -t $FRONTEND_IMAGE -r $REGISTRY_NAME ../src/frontend
 
 printf "\n\n*** Retrieving ACR information ***\n"
-ACR_SERVER=$(az acr show -n $REGISTRY_NAME --query loginServer -o tsv)
-ACR_USERNAME=$(az acr credential show -n $REGISTRY_NAME --query username -o tsv)
-ACR_PASSWORD=$(az acr credential show -n $REGISTRY_NAME --query passwords[0].value -o tsv)
+ACR_SERVER=$(az acr show -g $RESOURCE_GROUP_NAME -n $REGISTRY_NAME --query loginServer -o tsv)
+ACR_USERNAME=$(az acr credential show -g $RESOURCE_GROUP_NAME -n $REGISTRY_NAME --query username -o tsv)
+ACR_PASSWORD=$(az acr credential show -g $RESOURCE_GROUP_NAME -n $REGISTRY_NAME --query passwords[0].value -o tsv)
 printf "\n\n*** $ACR_SERVER $ACR_USERNAME ***\n"
 
 printf "\n\n*** Configuring Product Service to use ACR image ***\n"
