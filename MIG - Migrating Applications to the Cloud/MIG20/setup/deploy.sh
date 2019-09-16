@@ -171,12 +171,19 @@ az webapp config appsettings set -n $FRONTEND_NAME -g $RESOURCE_GROUP_NAME --set
 sed -i -e "s/INVENTORY_VM_IP_ADDRESS/${INVENTORY_VM_IP_ADDRESS}/g" inventorypostprocess.sh
 
 printf "\n\n *** Configuring the post-processing Inventory VM script ***\n\n"
+echo "ACR_USERNAME = $ACR_USERNAME"
 sed -i -e "s/REPLACE_CONTAINER_REGISTRY_USERNAME/${ACR_USERNAME}/g" inventoryvmconfigure.sh 
+echo "ACR_PASSWORD = $ACR_PASSWORD"
 sed -i -e "s/REPLACE_CONTAINER_REGISTRY_PASSWORD/${ACR_PASSWORD}/g" inventoryvmconfigure.sh
+echo "ACR_SERVER = $ACR_SERVER"
 sed -i -e "s/REPLACE_CONTAINER_REGISTRY_SERVER/${ACR_SERVER}/g" inventoryvmconfigure.sh
+echo "INVENTORY_SERVICE_IMAGE = $INVENTORY_SERVICE_IMAGE"
 sed -i -e "s/REPLACE_INVENTORY_IMAGE_NAME/${INVENTORY_SERVICE_IMAGE}/g" inventoryvmconfigure.sh
+echo "SQL2012_VM_IP_ADDRESS = $SQL2012_VM_IP_ADDRESS"
 sed -i -e "s/REPLACE_SQL_IP/${SQL2012_VM_IP_ADDRESS}/g" inventoryvmconfigure.sh
+echo "USERNAME = $USERNAME"
 sed -i -e "s/REPLACE_SQL_USERNAME/${USERNAME}/g" inventoryvmconfigure.sh
+echo "PASSWORD = $PASSWORD"
 sed -i -e "s/REPLACE_SQL_PASSWORD/${PASSWORD}/g" inventoryvmconfigure.sh
 
 printf "\n\n *** Running the mongodb server post process script *** \n\n"
