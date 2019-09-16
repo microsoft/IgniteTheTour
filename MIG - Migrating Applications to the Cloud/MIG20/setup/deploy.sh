@@ -69,7 +69,7 @@ git clone https://github.com/Azure-Samples/ignite-tour-lp1s1.git
 
 printf "\n*** Deploying the App Services and Cosmos DB ***\n"
 
-az group deployment create -g $RESOURCE_GROUP_NAME --template-file appservicedeploy.json --parameters prefix=$RESOURCE_PREFIX location=$MAIN_REGION sqlVMIPAddress=$SQL2012_VM_IP_ADDRESS sqlAdminLogin=$USERNAME sqlAdminPassword=$PASSWORD
+az group deployment create -g $RESOURCE_GROUP_NAME --template-file appservicedeploy.json --parameters prefix=$RESOURCE_PREFIX location=$MAIN_REGION sqlVMIPAddress=$SQL2012_VM_IP_ADDRESS sqlAdminLogin=$USERNAME sqlAdminPassword=$AZURESQLPASS
 
 # *** DELETE EVERYTHING TO THE NEXT 3 asterisks
 cd ignite-tour-lp1s1/deployment
@@ -134,6 +134,7 @@ az network vnet create -g $RESOURCE_GROUP_NAME -n $SQL_MI_VNET_NAME \
     --subnet-name $SQL_MI_SUBNET_NAME \
     --subnet-prefix 10.0.0.0/24
 
+printf "\n\n*** Creating the SQL Manage Instance ***\n\n"
 az sql mi create -g $RESOURCE_GROUP_NAME -n $SQL_MI_NAME -l $MAIN_REGION -i -u $USERNAME -p $AZURESQLPASS --vnet-name $SQL_MI_VNET_NAME --subnet $SQL_MI_SUBNET_NAME
 
 
@@ -168,7 +169,6 @@ printf "\n\n*** Configuring the Frontend to point at the Inventory Service VM***
 az webapp config appsettings set -n $FRONTEND_NAME -g $RESOURCE_GROUP_NAME --settings "INVENTORY_SERVICE_BASE_URL=http://$INVENTORY_VM_IP_ADDRESS:8080"
 
 sed -i -e "s/INVENTORY_VM_IP_ADDRESS/${INVENTORY_VM_IP_ADDRESS}/g" inventorypostprocess.sh
-
 printf "\n\n *** Configuring the post-processing Inventory VM script ***\n\n"
 sed -i -e "s/REPLACE_CONTAINER_REGISTRY_USERNAME/${ACR_USERNAME}/g" inventoryvmconfigure.sh 
 sed -i -e "s/REPLACE_CONTAINER_REGISTRY_PASSWORD/${ACR_PASSWORD}/g" inventoryvmconfigure.sh
@@ -176,9 +176,14 @@ sed -i -e "s/REPLACE_CONTAINER_REGISTRY_SERVER/${ACR_SERVER}/g" inventoryvmconfi
 sed -i -e "s/REPLACE_INVENTORY_IMAGE_NAME/${INVENTORY_SERVICE_IMAGE}/g" inventoryvmconfigure.sh
 sed -i -e "s/REPLACE_SQL_IP/${SQL2012_VM_IP_ADDRESS}/g" inventoryvmconfigure.sh
 sed -i -e "s/REPLACE_SQL_USERNAME/${USERNAME}/g" inventoryvmconfigure.sh
-sed -i -e "s/REPLACE_SQL_PASSWORD/${PASSWORD}/g" inventoryvmconfigure.sh
+sed -i -e "s/REPLACE_SQL_PASSWORD/${AZURESQLPASS}/g" inventoryvmconfigure.sh
+
 
 printf "\n\n *** Running the mongodb server post process script *** \n\n"
+sed -i -e "s/REPLACEDROPUSERNAME/${USERNAME}/g" mongoconfigure.sh
+sed -i -e "s/REPLACECREATEUSERNAME/${USERNAME}/g" mongoconfigure.sh
+sed -i -e "s/REPLACEPASSWORD/${AZURESQLPASS}/g" mongoconfigure.sh
+
 chmod +x postprocess.sh
 . postprocess.sh
 
