@@ -29,47 +29,75 @@ This is the demo script for the DevOps session. In this session, we will cover
 - Walk through real world build and release pipelines for Tailwind Trading.
 
 ## Setup
-This session's demos are done using the browser and one instance of VSCode. Open up an instance of your favorite browser and have the following tabs
+This session's demos use the browser and VSCode. 
 
-1. `Tab 1 - Git hub repo for tailwind front end` https://github.com/damovisa/AbelTailWindFrontEnd 
-![](readmeImages/2018-11-09-07-48-15.png)
-1. `Tab 2 - DevOps dashboard in Azure` https://ms.portal.azure.com/#@microsoft.onmicrosoft.com/dashboard/private/b490f4aa-5eaf-49d9-af61-3381ac839138
-![](readmeImages/2018-11-19-21-01-00.png)
-1. `Tab 3 - Tailwind Build All Up` https://dev.azure.com/azuredevopsdemo-a/AbelTailwindInventoryService/_apps/hub/ms.vss-ciworkflow.build-ci-hub?_a=edit-build-definition&id=27
-![](readmeImages/2018-11-09-07-59-05.png) 
-1. `Tab 4 - Tailwind Release All Up` https://dev.azure.com/azuredevopsdemo-a/AbelTailwindInventoryService/_releaseDefinition?definitionId=1&_a=definition-pipeline
-![](readmeImages/2018-11-09-09-09-09.png)
-1. `Tab 5 - Release Gate Docusign Example`
-https://msvstsdemo-a.visualstudio.com/YoCoreDemo/_releaseProgress?releaseId=10&_a=release-pipeline-progress
-![](readmeImages/2018-11-09-09-10-39.png)
-1. `Tab 6 - Release Gate Dynatrace Unbreakable Pipeline Pass`
-https://msvstsdemo-a.visualstudio.com/AbelUnbreakablePipelineDemo/_releaseProgress?releaseId=275&_a=release-pipeline-progress
-![](readmeImages/2018-11-09-09-11-41.png)
-1. `Tab 7 - Release Gate Dynatrace Unbreakable Pipeline Fail`
-https://msvstsdemo-a.visualstudio.com/AbelUnbreakablePipelineDemo/_releaseProgress?releaseId=276&_a=release-pipeline-progress
-![](readmeImages/2018-11-09-09-12-34.png)
+Start by making a fork then a local clone of https://github.com/Azure-Samples/ignite-tour-lp1s1.  
+You will be editing this code locally and pushing it to GitHub, which will trigger a build and release in Azure DevOps.
+
+Next, we need to create two Azure Websites, for deploying our app to staging and production in Azure DevOps.  The production app also includes a deployment slot that we wil use later for A/B testing.  
+
+Make sure that you are logged in to an Azure subscription, then cLick on the button to deploy the Web sites.  Take note of the  name for the staging Web app and the location for next steps: 
+
+<a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fneilpeterson%2Fbrian-templates%2Fmaster%2Fapp-service%2Fazuredeploy.json" target="_blank">
+    <img src="http://azuredeploy.net/deploybutton.png"/>
+</a>
+
+Once that is done, we need to create a new Azure DevOps project for building and deploying the application.  
+
+From the azure portal, create an Azure DevOps project as shown: 
+
+![](readmeImages/2018-11-12-14-36-35.png)
+
+Pick node and click next
+
+![](readmeImages/2018-11-12-14-37-25.png)
+
+Next, select a simple Node.js app.
+
+![](readmeImages/2018-11-12-14-38-06.png)
+
+For the Azure service to deploy to ,select a Windows Web App.
+
+Create a new project, and a new organization.  Enter your subscription information if it's not already displayed.  Reuse the Web App name and location that you recorded when deploying the Web app names in the deployment step above
+
+![](readmeImages/2018-11-12-14-42-10.png)
+
+
+When that has deployed, go to https://dev.azure.com/, select the organization you created, then select the project.  
+
+You have now deployed the application, a front-end resource group that wil be used as a target for the deployment, and all the Azure DevOps resources you need for building and deploying the application.   
+
+Last step: For convenience, open up an instance of your favorite browser and have the following tabs
+
+1. `Tab 1 - Git hub repo for tailwind front end` https://github.com/Azure-Samples/ignite-tour-lp1s1 
+
+1. `Tab 2 - DevOps dashboard ` 
+https://dev.azure.com/, then select the organization you created, then select the project.  
 
 Open up another instance of a different browser. If you opened up the first set using chrome, open up another browser using firefox or edge and in this browser have 2 tabs
 
-1. `Tab 1 - Tailwind Traders Staging` https://abeltailwindfrontend4staging.azurewebsites.net/
+1. `Tab 1 - Tailwind Traders Staging` 
+
 ![](readmeImages/2018-11-09-09-14-45.png)
-2. `Tab 2 - Tailwind Traders Production` https://abeltailwindfrontend4.azurewebsites.net/
-![](readmeImages/2018-11-09-09-15-37.png)
+
+2. `Tab 2 - Tailwind Traders Production` ![](readmeImages/2018-11-09-09-15-37.png)
 
 This demo will also use VSCode to make some code changes
 
-1. VSCode open with src/style.css open
+1. VSCode open with your local clone of https://github.com/Azure-Samples/ignite-tour-lp1s1, with the src/style.css file open.
+
 
 ## CLEANUP
 
-1. Delete build and release pipelines for https://dev.azure.com/azuredevopsdemos-a/AbelTailWind
-    - [Damovisa.ignite-tour-lp1s2 - CD](https://dev.azure.com/azuredevopsdemo-a/AbelTailWind/_release?view=mine)
-    - [Damovisa.ignite-tour-lp1s2](https://dev.azure.com/azuredevopsdemo-a/AbelTailWind/_build_)
-1. Change [Testing In Production for ABTesting slot](https://ms.portal.azure.com/#@microsoft.onmicrosoft.com/resource/subscriptions/e97f6c4e-c830-479b-81ad-1aff1dd07470/resourceGroups/AbelIgnite2018WServers/providers/Microsoft.Web/sites/AbelTailWindFrontEnd4/testingInProduction) to 0%
-1. Delete [ABTesting slot](https://ms.portal.azure.com/#@microsoft.onmicrosoft.com/resource/subscriptions/e97f6c4e-c830-479b-81ad-1aff1dd07470/resourceGroups/AbelIgnite2018WServers/providers/Microsoft.Web/sites/AbelTailWindFrontEnd4/deploymentSlots)
-1. Delete az-pipelines.yml file
-1. [Remove marketplace app access to the ignite-tour-lp1s2 repo in GitHub](https://github.com/settings/installations/380745)
+1. Delete build and release pipelines for your project 
+    
+Change Deployment Slot for ABTesting to 0%
+1. Delete ABTesting slot
+1. Delete the az-pipelines.yml file in your local clone and push the deletion to GitHub
+1. Remove marketplace app access to the ignite-tour-lp1s2 repo in GitHub
+1. Reset src/style.css
 1. go to `/src/Nav.js` and reset the heading
+
 ![](readmeImages/2018-11-28_15-56-20.png)
 
 ## Session script
@@ -257,7 +285,7 @@ Ok, looks like our build has completed
 
 ![](readmeImages/2018-11-09-15-17-08.png)
 
-And we get a nice build report that shows everything that happened during the build includeing tests. 
+And we get a nice build report that shows everything that happened during the build including tests. 
 
 ![](readmeImages/2018-11-09-15-17-42.png)
 
@@ -402,11 +430,7 @@ Here is the azure portal page for my app service which is hosting the Tailwind T
 
 ![](readmeImages/2018-11-10-16-31-18.png)
 
-To implement AB testing, scroll down to **Development Tools** and select **Testing In Production**
-
-![](readmeImages/2018-11-10-16-38-42.png)
-
-Here we get to add a deployment slot. Deployment slots are... think of them like a virtual directory for your web app. 
+To implement AB testing, scroll down to **Development Tools** and select **Deployment Slots** .  Here we get to add a deployment slot. Deployment slots are... think of them like a virtual directory for your web app. 
 
 ![](readmeImages/2018-11-10-16-39-37.png)
 
@@ -724,73 +748,5 @@ So what have we've shown you all?
    - We can even include automated deployment gates that utilize continuous monitoring to help us determine if a gate should pass or not
    - And we can quickly scaffold out our CI/CD pipelines into Azure with just a couple of clicks using Azure DevOps Projects!
 
-Now all of these demos that I have shown are still relatively simple. How would all of this work with a real world application? Like with Tailwind Traders?
-
-The Tailwind Traders application consists of a node.js web front end with two microservices. The inventory service is a .net core micro service running in a docker container hosted in Azure App Service.  The product service is a node js micro service running in a docker container hosted in a kubernetes cluster. The web front end is a Node.js app hosted in Azure App Service. And finally, there is also an iOS mobile app front end as well. Can we use Azure Pipelines to build and release this real world scenario?
-
-ABSOLULTEY! Check this out
-
-[`Tab 7 - Tailwind Build All Up` ]
-https://dev.azure.com/azuredevopsdemo-a/AbelTailwindInventoryService/_apps/hub/ms.vss-ciworkflow.build-ci-hub?_a=edit-build-definition&id=27
-![](readmeImages/2018-11-09-07-59-05.png) 
-
-Here is one build that builds ALL 4 parts of our application in parallel. We use a 
-hosted windows agent to build our .net core inventory service and we create a docker image out of it.
-
-![](readmeImages/2018-11-12-15-50-31.png)
-
-Next we use an ubuntu agent to build our node js product service container and then we create a helm package out of it
-
-![](readmeImages/2018-11-12-15-51-35.png)
-
-Next we use another ubuntu agent to build our node js Tailwind front end web application
-
-![](readmeImages/2018-11-12-15-52-12.png)
-
-And finally, we use one of our hosted mac agents to create our iOS application.
-
-1 build, 4 parallel agents building our app all at once. We are the ONLY cloud vender that will give you agents for all 3 platforms. Windows, Linux and Macs!!!!
-
-We can do the same thing with our release pipelines too.
-
-[`Tab 8 - Tailwind Release All Up` ]
-![](readmeImages/2018-11-12-16-11-47.png)
-
-Where we have one release with 4 parallel tracks. One track to deploy the inventory service as a container into App Service
-
-One track taking the Product Service and deploying that as a helm app in a Kubernetes Cluster
-
-One track that deploys the web front end as a static site sitting in App service and  finally, one track that takes the ios app and deploys it all the way out into the App Store.
-
-So real world? You bet. Using azure pipelines, you can deploy any app targeting any platform no matter how complex your app.  And as for release gates, here are some real world cases of using release gates.
-
-
-[`Tab 9 - Release Gate Docusign Example`]
-
-![](readmeImages/2018-11-09-09-10-39.png)
-
-I was recently at a hospital where they literally had a rule in place where they could not deploy into production without a physical document signed and uploaded to their docusign server. This was turning into a bottleneck as now, a physical person had to verify the document was signed before deployments into production could happen.  However, I also knew that Docusign had a rest api, so it was super simple to create a custom gate that checked to see if the document was signed.
-
-![](readmeImages/2018-11-12-16-17-21.png)
-
-So now, after the code is deployed into QA, tests were done, a human ok'd it, and now, the gate kicked in. When you set up a gate, you get to set up the polling frequency as well as the time out. So in this case, I pulled every 5 minutes checking to see if the document was signed. First time, wasn't signed. Second time, still wasn't signed. 15 minuytes later? Docuemnt was signed and the new deployment automatically deployed into the production environment.
-
-Another example of using these release gates is here, where I used Dynatrace monitoring to see if a release is good or not.
-
-[`Tab 10 - Release Gate Dynatrace Unbreakable Pipeline Pass`]
-
-![](readmeImages/2018-11-09-09-11-41.png)
-
-![](readmeImages/2018-11-12-16-19-51.png)
-
-In this example, code was deployed to staging, load test were run, and then the gate kicked in, where we use dynatrace to help us determine if the deployment was good or bad. In this case, all response times looked good, the gate passed and the code flowed into production.
-
-[`Tab 11 - Release Gate Dynatrace Unbreakable Pipeline Fail`]
-
-![](readmeImages/2018-11-09-09-12-34.png)
-
-![](readmeImages/2018-11-12-16-20-59.png)
-
-And here, after the code was deployed in staging and load tests were run, dynatrace detected enough annomolies that it said the release was bad, failing the gate, and the bad code never made it into production.
 
 So here you can see how using automated approval gates, you can use AI to help with your deployments. So all you devs out there, let's do this!!! Go to dev.azure.com and let's start building our CI/CD pipelines so we can all deploy faster yet safer

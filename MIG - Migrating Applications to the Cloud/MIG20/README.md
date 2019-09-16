@@ -12,30 +12,28 @@ This README gives a guide to setting up and running all the demos contained with
 * Azure SQL Database
 * Azure SQL Data Migration Service
 
-## How to Publish/Deploy Manually
+## Deploy the Sample Aplication
 
-The best way to run the setup scripts is with [Azure Cloud Shell](https://docs.microsoft.com/en-us/azure/cloud-shell/overview?WT.mc_id=mig20install-github-masoucou). The Cloud Shell is guaranteed to always have the latest Azure CLI installed, and you can perform Git clones to it, to get the latest code.
+Make sure that you are logged in to an Azure subscription, then click on the button below to deploy the required resources: 
 
-### Azure Setup Instructions
-
-1. Open up [Azure Cloud Shell](https://shell.azure.com)
-1. Clone this repository: `git clone https://github.com/microsoft/IgniteTheTour`
-1. Change into the `MIG - Migrating Applications to the Cloud/MIG20/setup` directory
-1. Run the `deploy.sh` script: `./deploy.sh`
-1. Please note this script may take up to 60 minutes to complete. You will need to keep your computer from sleeping during that time in order to keep the connection to Azure Cloud Shell active.
-
-The `deploy.sh` script will prompt you for the following information:
+You will be prompted for the following information:
 
 * Azure subscription to install all the resources into
 * The resource group name
-* A prefix to apply the name of the resources created (this helps keep the names unique across all of Azure) _make sure it's lowercase!_
+* A prefix to apply the name of the resources created (this helps keep the names unique across all of Azure) **make sure it's lowercase!**
 * A username (to be used for all resources)
-* A password (to be used for all resources - do not include any exclamation points)
-* A password for the Azure SQL instance (needs to be a strong password)
+* A password (needs to be a strong password, to be used for all resources - **do not include any exclamation points or the @ character**)
 
-The script will take roughly an hour to run to completion.
+The script may take up to an hour to run, it may also be faster.
 
-Once the install is finished, the script will output important URLs and connection string info that will be used during the demo.
+<a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fneilpeterson%2Fbrian-templates%2Fmaster%2Fdata-migration-template%2Fazuredeploy.json" target="_blank">
+    <img src="http://azuredeploy.net/deploybutton.png"/>
+</a>
+
+> **IMPORTANT** Observe the rules:
+> - The SQL password may not contain the SQL username.
+> - The CosmosDB password may not contain the @ character.
+> - The Prefix must be in _lowercase_.
 
 > **NOTE: POSSIBLE ERROR DURING SCRIPT**
 > You may receive an error at the end of the script that looks like the following.
