@@ -1,8 +1,4 @@
 sudo usermod -aG docker azureuser
-
-echo "Let's see if Docker is running..."
-sudo docker version
-
 sudo docker login -u REPLACE_CONTAINER_REGISTRY_USERNAME -p REPLACE_CONTAINER_REGISTRY_PASSWORD REPLACE_CONTAINER_REGISTRY_SERVER
 sudo docker rm -f ignite-service
 sudo docker pull REPLACE_CONTAINER_REGISTRY_SERVER/REPLACE_INVENTORY_IMAGE_NAME
