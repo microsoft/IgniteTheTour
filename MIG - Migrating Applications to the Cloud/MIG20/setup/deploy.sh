@@ -5,7 +5,7 @@ read -p 'Username (applied to all resources): ' USERNAME
 
 echo ""
 
-read -sp 'Password for Azure SQL - must be strong: ' AZURESQLPASS
+read -sp 'Password for Azure SQL - must be strong: ' PASSWORD
 
 echo "Welcome to Tailwind Traders Data Migration!!"
 
@@ -27,7 +27,7 @@ PRODUCT_SERVICE_IMAGE='tailwind-product-service:0.1'
 INVENTORY_SERVICE_IMAGE='tailwind-inventory-service:0.1'
 FRONTEND_IMAGE='tailwind-frontend:0.1'
 
-MAIN_REGION=eastus
+MAIN_REGION=southeastasia
 
 printf "\n*** Setting the subsription to $SUBSCRIPTION***\n"
 az account set --subscription "$SUBSCRIPTION"
@@ -37,7 +37,7 @@ az group create -n $RESOURCE_GROUP_NAME -l $MAIN_REGION
 
 printf "\n*** Creating the SQL Server 2012 Virtual Machine (can take 20 minutes) ***\n"
 az group deployment create -g $RESOURCE_GROUP_NAME --template-file sqlvmdeploy.json \
-    --parameters adminUsername=$USERNAME adminPassword=$AZURESQLPASS sqlAuthenticationPassword=$AZURESQLPASS sqlAuthenticationLogin=$USERNAME virtualMachineName=$SQL2012_VM_NAME
+    --parameters adminUsername=$USERNAME adminPassword=$PASSWORD sqlAuthenticationPassword=$PASSWORD sqlAuthenticationLogin=$USERNAME virtualMachineName=$SQL2012_VM_NAME
 
 SQL2012_VM_IP_ADDRESS=$(az vm list-ip-addresses -g $RESOURCE_GROUP_NAME -n $SQL2012_VM_NAME | jq -r '.[0].virtualMachine.network.publicIpAddresses[0].ipAddress')
 
@@ -69,7 +69,7 @@ git clone https://github.com/Azure-Samples/ignite-tour-lp1s1.git
 
 printf "\n*** Deploying the App Services and Cosmos DB ***\n"
 
-az group deployment create -g $RESOURCE_GROUP_NAME --template-file appservicedeploy.json --parameters prefix=$RESOURCE_PREFIX location=$MAIN_REGION sqlVMIPAddress=$SQL2012_VM_IP_ADDRESS sqlAdminLogin=$USERNAME sqlAdminPassword=$AZURESQLPASS
+az group deployment create -g $RESOURCE_GROUP_NAME --template-file appservicedeploy.json --parameters prefix=$RESOURCE_PREFIX location=$MAIN_REGION sqlVMIPAddress=$SQL2012_VM_IP_ADDRESS sqlAdminLogin=$USERNAME sqlAdminPassword=$PASSWORD
 
 # *** DELETE EVERYTHING TO THE NEXT 3 asterisks
 cd ignite-tour-lp1s1/deployment
@@ -135,7 +135,7 @@ az network vnet create -g $RESOURCE_GROUP_NAME -n $SQL_MI_VNET_NAME \
     --subnet-prefix 10.0.0.0/24
 
 printf "\n\n*** Creating the SQL Manage Instance ***\n\n"
-az sql mi create -g $RESOURCE_GROUP_NAME -n $SQL_MI_NAME -l $MAIN_REGION -i -u $USERNAME -p $AZURESQLPASS --vnet-name $SQL_MI_VNET_NAME --subnet $SQL_MI_SUBNET_NAME
+az sql mi create -g $RESOURCE_GROUP_NAME -n $SQL_MI_NAME -l $MAIN_REGION -i -u $USERNAME -p $PASSWORD --vnet-name $SQL_MI_VNET_NAME --subnet $SQL_MI_SUBNET_NAME
 
 
 SQL_DMS_SUBNET_NAME=dms
@@ -176,13 +176,13 @@ sed -i -e "s/REPLACE_CONTAINER_REGISTRY_SERVER/${ACR_SERVER}/g" inventoryvmconfi
 sed -i -e "s/REPLACE_INVENTORY_IMAGE_NAME/${INVENTORY_SERVICE_IMAGE}/g" inventoryvmconfigure.sh
 sed -i -e "s/REPLACE_SQL_IP/${SQL2012_VM_IP_ADDRESS}/g" inventoryvmconfigure.sh
 sed -i -e "s/REPLACE_SQL_USERNAME/${USERNAME}/g" inventoryvmconfigure.sh
-sed -i -e "s/REPLACE_SQL_PASSWORD/${AZURESQLPASS}/g" inventoryvmconfigure.sh
+sed -i -e "s/REPLACE_SQL_PASSWORD/${PASSWORD}/g" inventoryvmconfigure.sh
 
 
 printf "\n\n *** Running the mongodb server post process script *** \n\n"
 sed -i -e "s/REPLACEDROPUSERNAME/${USERNAME}/g" mongoconfigure.sh
 sed -i -e "s/REPLACECREATEUSERNAME/${USERNAME}/g" mongoconfigure.sh
-sed -i -e "s/REPLACEPASSWORD/${AZURESQLPASS}/g" mongoconfigure.sh
+sed -i -e "s/REPLACEPASSWORD/${PASSWORD}/g" mongoconfigure.sh
 
 chmod +x postprocess.sh
 . postprocess.sh
