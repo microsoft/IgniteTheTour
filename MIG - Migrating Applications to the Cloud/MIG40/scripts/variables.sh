@@ -9,8 +9,10 @@ SUB='Ignite the Tour'
 DB_BASE=tailwind
 PG_HOST_BASE=".postgres.database.azure.com"
 PG_USER_BASE=tuser
-PG_USER="tuser@tailwindlp2s4"
-PG_PASS='asdf1234)(*&^)'
+# Sample User for Test - this is not real data
+PG_USER="tuser@tailwindtestuser"
+# Sample Password for Test - this is not real data
+PG_PASS='asdf1234124asdf)(*&^)'
 COLLECTION=inventory
 SENDGRID_API_KEY=`az keyvault secret show --vault-name ignitetour-credentials --name 'SendGridAPIKey' | jq .value | sed 's/"//g'`
 SENDGRID_TEMPLATE_ID="d-f6aad27b127643e29f4ce3de5ca7d5f9"
