@@ -8,7 +8,7 @@ az cosmosdb create \
     --resource-group $(rg) \
     --name $(cosmosname) \
     --kind MongoDB \
-    --locations "South Central US"=0 "North Central US"=1 \
+    --locations "South Central US"=0 --locations "North Central US"=1 \
     --default-consistency-level "ConsistentPrefix" \
     --enable-multiple-write-locations true
 

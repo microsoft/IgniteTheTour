@@ -12,13 +12,15 @@ We're assuming you are running this demo on a Mac OS X Machine. If you aren't, y
 
 ### Prerequisites
 
-#### CLIs
-
-* [Homebrew](https://brew.sh/) - this is the CLI tool that we'll use to install the tools below
 * The `az` CLI. See [here](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli-macos?view=azure-cli-latest&wt.mc_id=msignitethetour-github-mig40) for how to install it
 * [Azure Functions Core Tools](https://docs.microsoft.com/en-us/azure/azure-functions/functions-run-local?wt.mc_id=msignitethetour-github-mig40). Install with the following:
+* A local Docker daemon and properly configured `docker` CLI. See [here](https://docs.docker.com/docker-for-mac/) for installation instructions
+
+##### macOS
+* [Homebrew](https://brew.sh/) - this is the CLI tool that we'll use to install the tools below
 
 ```console
+$ brew install npm
 $ brew tap azure/functions
 $ brew install azure-functions-core-tools
 ```
@@ -26,10 +28,22 @@ $ brew install azure-functions-core-tools
 * The [`jq`](https://stedolan.github.io/jq/) tool. Install with the following:
 
 ```console
-brew install jq
+$ brew install jq
 ```
 
-* A local Docker daemon and properly configured `docker` CLI. See [here](https://docs.docker.com/docker-for-mac/) for installation instructions
+##### Linux / WSL
+Ensure that you're using the [Docker WSL Tech Preview](https://docs.docker.com/docker-for-windows/wsl-tech-preview/)
+Enable it using:
+```console
+docker context use wsl
+```
+
+Install dependencies
+```console
+$ sudo apt install jq
+$ sudo apt install npm
+$ sudo apt install dotnet-sdk-2.2
+```
 
 #### Sendgrid
 
@@ -58,7 +72,6 @@ If you want to run any of the scripts individually, source the `scripts/variable
 
 ```console
 $ source ./scripts/variables.sh
-$ ./scripts/up/secrets.sh
 ```
 
 ## Setup & Teardown
