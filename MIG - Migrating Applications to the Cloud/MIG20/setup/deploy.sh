@@ -1,10 +1,13 @@
 read -p 'Subscription to use: ' SUBSCRIPTION
 read -p 'New resource group name: ' RESOURCE_GROUP_NAME
+read -p 'Azure Region: ' MAIN_REGION
 read -p 'Unique prefix (all lowercase - applied to all resources): ' RESOURCE_PREFIX
 read -p 'Username (applied to all resources): ' USERNAME
 
 echo ""
+read -sp 'Password (applied to all resources that need password): ' PASSWORD
 
+echo ""
 read -sp 'Password for Azure SQL - must be strong: ' AZURESQLPASS
 
 echo "Welcome to Tailwind Traders Data Migration!!"
@@ -27,7 +30,8 @@ PRODUCT_SERVICE_IMAGE='tailwind-product-service:0.1'
 INVENTORY_SERVICE_IMAGE='tailwind-inventory-service:0.1'
 FRONTEND_IMAGE='tailwind-frontend:0.1'
 
-MAIN_REGION=eastus
+# Azure Region is an input.
+#MAIN_REGION=eastus
 
 printf "\n*** Setting the subsription to $SUBSCRIPTION***\n"
 az account set --subscription "$SUBSCRIPTION"
@@ -37,7 +41,7 @@ az group create -n $RESOURCE_GROUP_NAME -l $MAIN_REGION
 
 printf "\n*** Creating the SQL Server 2012 Virtual Machine (can take 20 minutes) ***\n"
 az group deployment create -g $RESOURCE_GROUP_NAME --template-file sqlvmdeploy.json \
-    --parameters adminUsername=$USERNAME adminPassword=$PASSWORD sqlAuthenticationPassword=$PASSWORD sqlAuthenticationLogin=$USERNAME virtualMachineName=$SQL2012_VM_NAME
+    --parameters adminUsername=$USERNAME adminPassword=$PASSWORD sqlAuthenticationPassword=$AZURESQLPASS sqlAuthenticationLogin=$USERNAME virtualMachineName=$SQL2012_VM_NAME
 
 SQL2012_VM_IP_ADDRESS=$(az vm list-ip-addresses -g $RESOURCE_GROUP_NAME -n $SQL2012_VM_NAME | jq -r '.[0].virtualMachine.network.publicIpAddresses[0].ipAddress')
 
@@ -79,18 +83,18 @@ cd ignite-tour-lp1s1/deployment
 # cd '../../../DEV - Building your Applications for the Cloud/DEV10/deployment'
 
 printf "\n*** Building Inventory Service image in ACR ***\n"
-az acr build -t $INVENTORY_SERVICE_IMAGE -r $REGISTRY_NAME ../src/inventory-service/InventoryService.Api
+az acr build -g $RESOURCE_GROUP_NAME -t $INVENTORY_SERVICE_IMAGE -r $REGISTRY_NAME ../src/inventory-service/InventoryService.Api
 
 printf "\n*** Building Product Service image in ACR ***\n"
-az acr build -t $PRODUCT_SERVICE_IMAGE -r $REGISTRY_NAME ../src/product-service
+az acr build -g $RESOURCE_GROUP_NAME -t $PRODUCT_SERVICE_IMAGE -r $REGISTRY_NAME ../src/product-service
 
 printf "\n\n*** Building Frontend image in ACR ***\n"
-az acr build -t $FRONTEND_IMAGE -r $REGISTRY_NAME ../src/frontend
+az acr build -g $RESOURCE_GROUP_NAME -t $FRONTEND_IMAGE -r $REGISTRY_NAME ../src/frontend
 
 printf "\n\n*** Retrieving ACR information ***\n"
-ACR_SERVER=$(az acr show -n $REGISTRY_NAME --query loginServer -o tsv)
-ACR_USERNAME=$(az acr credential show -n $REGISTRY_NAME --query username -o tsv)
-ACR_PASSWORD=$(az acr credential show -n $REGISTRY_NAME --query passwords[0].value -o tsv)
+ACR_SERVER=$(az acr show -g $RESOURCE_GROUP_NAME -n $REGISTRY_NAME --query loginServer -o tsv)
+ACR_USERNAME=$(az acr credential show -g $RESOURCE_GROUP_NAME -n $REGISTRY_NAME --query username -o tsv)
+ACR_PASSWORD=$(az acr credential show -g $RESOURCE_GROUP_NAME -n $REGISTRY_NAME --query passwords[0].value -o tsv)
 printf "\n\n*** $ACR_SERVER $ACR_USERNAME ***\n"
 
 printf "\n\n*** Configuring Product Service to use ACR image ***\n"
@@ -167,12 +171,20 @@ az webapp config appsettings set -n $FRONTEND_NAME -g $RESOURCE_GROUP_NAME --set
 sed -i -e "s/INVENTORY_VM_IP_ADDRESS/${INVENTORY_VM_IP_ADDRESS}/g" inventorypostprocess.sh
 
 printf "\n\n *** Configuring the post-processing Inventory VM script ***\n\n"
+echo "ACR_USERNAME = $ACR_USERNAME"
 sed -i -e "s/REPLACE_CONTAINER_REGISTRY_USERNAME/${ACR_USERNAME}/g" inventoryvmconfigure.sh 
-sed -i -e "s/REPLACE_CONTAINER_REGISTRY_PASSWORD/${ACR_PASSWORD}/g" inventoryvmconfigure.sh
+echo "ACR_PASSWORD = $ACR_PASSWORD"
+# Sometimes you have slash within the password...
+sed -i -e "s;REPLACE_CONTAINER_REGISTRY_PASSWORD;${ACR_PASSWORD};g" inventoryvmconfigure.sh
+echo "ACR_SERVER = $ACR_SERVER"
 sed -i -e "s/REPLACE_CONTAINER_REGISTRY_SERVER/${ACR_SERVER}/g" inventoryvmconfigure.sh
+echo "INVENTORY_SERVICE_IMAGE = $INVENTORY_SERVICE_IMAGE"
 sed -i -e "s/REPLACE_INVENTORY_IMAGE_NAME/${INVENTORY_SERVICE_IMAGE}/g" inventoryvmconfigure.sh
+echo "SQL2012_VM_IP_ADDRESS = $SQL2012_VM_IP_ADDRESS"
 sed -i -e "s/REPLACE_SQL_IP/${SQL2012_VM_IP_ADDRESS}/g" inventoryvmconfigure.sh
+echo "USERNAME = $USERNAME"
 sed -i -e "s/REPLACE_SQL_USERNAME/${USERNAME}/g" inventoryvmconfigure.sh
+echo "PASSWORD = $PASSWORD"
 sed -i -e "s/REPLACE_SQL_PASSWORD/${PASSWORD}/g" inventoryvmconfigure.sh
 
 printf "\n\n *** Running the mongodb server post process script *** \n\n"
