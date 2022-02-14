@@ -47,7 +47,7 @@ az webapp config appsettings set -g $(rg) -n $WEB_APP_2 --settings \
     'PORT'='80'
 # connection-string
 az webapp config connection-string set -g $(rg) -n $WEB_APP_2 --connection-string-type Custom --settings \
-    'InventoryContext'='Server=tailwindlp2s4.postgres.database.azure.com;Database=tailwind;Port=5432;UserId=tuser@tailwindlp2s4;Password=asdf1234)(*&^);SslMode=Require;'
+    'InventoryContext'='Server=;Database=tailwind;Port=5432;UserId=tuser@tailwindlp2s4;Password=;SslMode=Require;'
 
 WEB_APP_3='product-service-'$(rg)
 prompt az webapp create \
