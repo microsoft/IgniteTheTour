@@ -1,5 +1,7 @@
 # Moving Your On-Premises Data Servers To Azure
 
+> **IMPORTANT NOTE** This repository is obsolete and shouldn't be used anymore. Please more to the [new and improved session](https://github.com/microsoft/ignite-learning-paths-training-mod/tree/master/mod20) for deployment and demos :)
+
 Don't run your own datacenter - let Microsoft do it for you! Learn everything you need to know to get those SQL Server and MongoDB databases off-premises!
 
 This README gives a guide to setting up and running all the demos contained with the _Moving Your On-Premises Data Servers To Azure_ presentation.
